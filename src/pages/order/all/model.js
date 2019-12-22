@@ -1,5 +1,5 @@
 import { getOrders} from './service';
-import { removeOrders,getOrdersCount} from './service';
+import { removeOrders,getOrdersCount,changePages} from './service';
 const Model = {
   namespace: 'order',
   state: {
@@ -9,15 +9,18 @@ const Model = {
     },
     count:0,
     current:1,
-    link:[]
+    link:[],
+    flag:true
   },
   effects: {
     *fetch({ payload }, { call, put,select }) {
-      let reg =/(?<=page_info=).*?(?=>)/g
-      let response = yield call(getOrders, payload);
-      const res =yield call(getOrdersCount);
-      const {order} =yield select();
-      console.log('sss',order.current,payload,response);
+      const reg =/(?<=page_info=).*?(?=>)/g;
+      const {order} = yield select();
+      console.log('.........',payload);
+      
+       const response = yield call(getOrders,payload);    
+      const res =yield call(getOrdersCount,payload);
+      console.log('sss',order.current,payload,response);    
       yield put({
         type: 'save',
         payload: {
@@ -29,26 +32,72 @@ const Model = {
         type: 'count',
         payload:res.data.count
       });
-      yield put({
+     
+      if(response.headers.link!=null && payload && payload.order){ 
+        console.log('====================================');
+           console.log('aaaaaaaaaaa');
+           console.log('===================================='); 
+        yield put({
+       type: 'current',
+       payload:1
+        });
+     yield put({
+       type: 'link',
+       payload:{
+       l:response.headers.link.match(reg)
+       }
+        });
+     }
+         if(response.headers.link!=null  && payload && payload.financial_status ){
+           console.log('====================================');
+           console.log('ssssss');
+           console.log('===================================='); 
+        yield put({
+          type: 'current',
+          payload:1
+           });
+        yield put({
+          type: 'link',
+          payload:{
+          l:response.headers.link.match(reg)
+          }
+           });
+           
+      }
+
+      if(response.headers.link!=null){ 
+        yield put({
         type: 'link',
-        payload:response.headers.link.match(reg)
-      });
-      if(payload){
+        payload:{l:response.headers.link.match(reg)}
+      });  
+      }
+  
+      // if(payload && payload.cur!=order.current){
+      //  yield put({
+      //    type: 'current',
+      //    payload:payload.cur
+      //     });
+      // }
+      if(payload==1){
        yield put({
          type: 'current',
-         payload:payload.cur
+         payload:1
+          });
+       yield put({
+         type: 'link',
+         payload:{
+         l:response.headers.link.match(reg)
+         }
           });
       }
       
       
      
     },
-   *changepage({payload:{cur,p}},{put,call,select}){
+   *changepage({payload},{put,call,select}){
         const {order} =yield select();
-        console.log('p',p);
-        console.log('cur',cur,p);
-        if(order.current<cur){
-        const res =yield call(getOrders,p);
+        const reg =/(?<=page_info=).*?(?=>)/g;
+        const res =yield call(changePages,payload);
         yield put({
           type: 'save',
           payload: {
@@ -56,9 +105,25 @@ const Model = {
             pagination: {},
           },
         });
-       }
-        
+          yield put({
+            type: 'current',
+            payload:payload.cur
+             });
+          yield put({
+              type: 'link',
+              payload:{
+              l:res.headers.link.match(reg)
+              }
+               });
+         
+       
    },
+  *reflag({payload},{put}){
+       yield put({
+          type:'flag',
+          payload:true
+       })
+  },
     *add({ payload, callback }, { call, put }) {
       const response = yield call(addRule, payload);
       yield put({
@@ -105,10 +170,13 @@ const Model = {
       return { ...state, count: action.payload };
     },
     link(state, action) {
-      return { ...state, link: action.payload };
+      return { ...state, link: action.payload.l};
     },
     current(state, action) {
       return { ...state, current: action.payload };
+    },
+    flag(state, action) {
+      return { ...state, flag: action.payload };
     },
     
   },
