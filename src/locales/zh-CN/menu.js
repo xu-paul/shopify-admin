@@ -51,5 +51,6 @@ export default {
   'menu.products': '商品页面',
   'menu.order': '订单',
   'menu.order.all': '所有订单',
+  'menu.order.draft': '草稿',
   'menu.order.abandoned': '弃单',
 };

@@ -183,9 +183,14 @@ export default {
                   component: './order/all',      
                 },
                 {
-                  
-                  path: '/order/all/create',
-                  component: './order/all/create', 
+                  name:'draft',
+                  icon: 'smile',
+                  path: '/order/draft',
+                  component: './order/draft', 
+                },
+                {
+                  path: '/order/draft/create',
+                  component: './order/draft/create', 
                 },
                 {
                   name: 'abandoned',

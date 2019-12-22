@@ -1,7 +1,7 @@
 import { Alert, Table } from 'antd';
 import React, { Component, Fragment } from 'react';
 import styles from './index.less';
-import { connect } from 'dva';
+
 function initTotalList(columns) {
   if (!columns) {
     return [];
@@ -15,10 +15,7 @@ function initTotalList(columns) {
   });
   return totalList;
 }
-@connect(({ order, loading }) => ({
-  order,
-  loading: loading.models.order,
-}))
+
 class StandardTable extends Component {
   static getDerivedStateFromProps(nextProps) {
     // clean state
@@ -63,7 +60,8 @@ class StandardTable extends Component {
   };
 
   handleTableChange = (pagination, filters, sorter, ...rest) => {
-    const { onChange } = this.props;  
+    const { onChange } = this.props;
+
     if (onChange) {
       onChange(pagination, filters, sorter, ...rest);
     }
@@ -77,15 +75,12 @@ class StandardTable extends Component {
 
   render() {
     const { selectedRowKeys, needTotalList } = this.state;
-    const { data, rowKey,order:{count,current}, ...rest } = this.props;
+    const { data, rowKey, ...rest } = this.props;
     const { list = [], pagination = false } = data || {};
     const paginationProps = pagination
       ? {
-          showSizeChanger: false,
-          showQuickJumper: false,
-          simple:true,
-          total:count,
-          current:current,
+          showSizeChanger: true,
+          showQuickJumper: true,
           ...pagination,
         }
       : false;
