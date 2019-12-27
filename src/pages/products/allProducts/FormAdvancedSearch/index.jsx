@@ -74,7 +74,7 @@ class AdvancedSearchForm extends React.Component {
                 <Select
                   placeholder="Select a value"
                   style={{
-                    width: '100%',
+                    width: '150px',
                   }}
                 >
                   <Option value="Select">Select a value</Option>

@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { fakeSubmitForm,getProducts,addOrder,getProductsImages } from './service';
+import { fakeSubmitForm,getProducts,addOrder,getCustomers } from './service';
 
 const Model = {
   namespace: 'create',
@@ -9,7 +9,8 @@ const Model = {
     },
     item:0,
     status:'pending',
-    image:''
+    image:'',
+    customer:[],
   },
   effects: {
     *submitRegularForm({ payload }, { call }) {
@@ -33,17 +34,24 @@ const Model = {
        
     },
     *selectp({payload:val},{put,call}){
-         console.log('s',val);
-         const resp =yield call(getProductsImages,val.variants[0].product_id,val.variants[0].image_id);
-         console.log(resp.data.image.src);
+         console.log('s',val,);
          yield put({
-           type:'getid',
+           type:'item',
            payload:val
-         })      
-         yield put({
+         })  
+         if(val.image==null){
+          yield put({
+            type:'getimage',
+            payload:'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=33325274,822918042&fm=26&gp=0.jpg'
+          })    
+         }
+         else{
+             yield put({
            type:'getimage',
-           payload:resp.data.image.src
+           payload:val.image.src
          })      
+         }
+       
     }, 
     *changestatus({payload:status},{put}){
            yield put({
@@ -51,18 +59,29 @@ const Model = {
             payload:status
           })
     }, 
-    *addorder({payload},{call}){    
+    *addorder({payload},{call,put}){    
        yield call(addOrder,payload);
+       console.log('success');
        message.success('创建成功');
+   
     },
-
+    *getcustomer({payload},{call,put}){    
+       const res= yield call(getCustomers);
+       console.log('ccc',res.data.customers)
+       yield put ({
+         type:'customer',
+         payload:res.data.customers
+       })
+     
+    },
+      
 
     },
   reducers: {
     save(state, action) {
       return { ...state, data: action.payload };
     },
-    getid(state, action) {
+    item(state, action) {
       return { ...state, item:action.payload};
     },
     getimage(state, action) {
@@ -71,10 +90,12 @@ const Model = {
     changes(state, action) {
       return { ...state, status:action.payload};
     },
-    item(state, action) {
-      return { ...state, item:action.payload};
+    customer(state, action) {
+      return { ...state, customer:action.payload};
     },
+   
     
+  
   },
 };
 export default Model;
