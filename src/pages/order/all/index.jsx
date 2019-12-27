@@ -123,6 +123,15 @@ class Order extends Component {
     });
   }
 
+  linkDetail=(id)=>{
+    const { dispatch } = this.props; 
+    dispatch({
+      type: 'order/linkdetail',
+      payload:id
+    });
+
+    
+  } 
   handleStandardTableChange = (pagination, filtersArg, sorter) => {
     const { dispatch,order:{link,current} } = this.props;
     const { formValues } = this.state;
@@ -299,12 +308,12 @@ class Order extends Component {
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
-            <FormItem label="付款状态">
+            <FormItem label="付款状态" >
               {getFieldDecorator('financial_status')(
                 <Select
                   placeholder="请选择"
                   style={{
-                    width: '100%',
+                    width: '200px',
                   }}
                 >
                   <Option value="pending">pending</Option>
@@ -482,6 +491,7 @@ class Order extends Component {
       loading,
     } = this.props;
 
+    console.log('data',data.list);
     
     const { selectedRows, modalVisible, updateModalVisible, stepFormValues } = this.state;
     const menu = (
@@ -530,6 +540,11 @@ class Order extends Component {
               columns={this.columns}
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}
+              onRow={(record,index) => {
+                return {
+                  onClick: () => {this.linkDetail(data.list[index].id)},    
+                };
+              }}
               rowKey="id"
             />
           </div>

@@ -149,6 +149,13 @@ class StandardTable extends Component {
           dataSource={list}
           pagination={paginationProps}
           onChange={this.handleTableChange}
+          onRow={record => {
+            return {
+              onClick: () => {console.log('onrow');
+              }, // 点击行
+             
+            };
+          }}
           {...rest}
         />
       </div>
