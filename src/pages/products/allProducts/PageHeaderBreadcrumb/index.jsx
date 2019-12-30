@@ -7,11 +7,11 @@ const routes = [
     breadcrumbName: '首页',
   },
   {
-    path: '/products/all-products',
+    path: '/products/allProducts',
     breadcrumbName: '商品展示',
   },
   {
-    path: '/products/all-products',
+    path: '/products/allProducts',
     breadcrumbName: '所有商品',
   },
 ];

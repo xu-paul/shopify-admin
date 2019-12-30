@@ -26,7 +26,7 @@ export default () => (
         style={{
           border: '1px solid rgb(235, 237, 240)',
         }}
-        title="所有商品"
+        title="商品修改"
         breadcrumb={{
           routes,
         }}

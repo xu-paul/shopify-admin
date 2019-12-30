@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import PageHeaderBreadcrumb from './PageHeaderBreadcrumb';
-import TableRowSelectionAndOperation from './TableRowSelectionAndOperation';
-import FormAdvancedSearch from './FormAdvancedSearch';
+import Table from './Table'
+import Form from './Form'
 
 class AllProducts extends Component {
   render() {
     return (
       <div>
         <PageHeaderBreadcrumb />
-        <FormAdvancedSearch />
-        <TableRowSelectionAndOperation />
+        <Form />
+        <Table />
       </div>
     );
   }
