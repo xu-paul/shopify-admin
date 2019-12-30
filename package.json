@@ -49,6 +49,7 @@
   "dependencies": {
     "@ant-design/pro-layout": "^4.8.3",
     "@antv/data-set": "^0.10.2",
+    "@tinymce/tinymce-react": "^3.3.2",
     "@types/lodash.debounce": "^4.0.6",
     "@types/lodash.isequal": "^4.5.5",
     "@types/react-router": "^5.0.2",

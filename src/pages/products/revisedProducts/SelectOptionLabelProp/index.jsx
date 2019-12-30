@@ -5,8 +5,8 @@ import { connect } from 'dva';
 
 const { Option } = Select;
 
-@connect(({ revised, loading }) => ({
-  revised,
+@connect(({ reviseds, loading }) => ({
+  revised:reviseds,
 }))
 class SelectOptionLabelProp extends React.Component {
   state = {
@@ -15,7 +15,7 @@ class SelectOptionLabelProp extends React.Component {
   handleChange = (_, select) => {
     const { dispatch } = this.props;
     dispatch({
-      type: 'revised/selects',
+      type: 'reviseds/selects',
       payload: {
         select,
         value: _,
@@ -25,7 +25,7 @@ class SelectOptionLabelProp extends React.Component {
   render() {
     const { revised } = this.props;
     return (
-      <div className={styles.container}>
+      <div className={styles.container} style={{marginTop:'36px',backgroundColor:'#fff',padding:'24px 24px'}}>
         <div id="components-select-demo-option-label-prop">
           <Select
             mode="multiple"
@@ -37,16 +37,16 @@ class SelectOptionLabelProp extends React.Component {
             onChange={this.handleChange}
             optionLabelProp="label"
           >
-            <Option value="Title" label="title">
-              title
+            <Option value="title" label="Title">
+              Title
             </Option>
-            <Option value="Tags" label="tags">
+            <Option value="tags" label="Tags">
               Tags
             </Option>
-            <Option value="Vendor" label="vendor">
+            <Option value="vendor" label="Vendor">
               Vendor
             </Option>
-            <Option value="Availability" label="published_scope">
+            <Option value="published_scope" label="Availability">
               Availability
             </Option>
           </Select>

@@ -118,28 +118,8 @@ export default {
               path: '/dashboard',
               name: 'dashboard',
               icon: 'dashboard',
-              routes: [
-                {
-                  name: 'analysis',
-                  icon: 'smile',
-                  path: '/dashboard/analysis',
-                  component: './dashboard/analysis',
-                },
-                {
-                  name: 'monitor',
-                  icon: 'smile',
-                  path: '/dashboard/monitor',
-                  component: './dashboard/monitor',
-                },
-                {
-                  name: 'workplace',
-                  icon: 'smile',
-                  path: '/dashboard/workplace',
-                  component: './dashboard/workplace',
-                },
-              ],
+              component: './home',
             },
-           
             {
               path: '/order',
               icon: 'table',
@@ -199,31 +179,27 @@ export default {
                   component: './products/allProducts',
                 },
                 {
-                  name: 'add-products',
                   path: '/products/allProduct/:id',
                   component: './products/addProduct',
                 },
                 {
-                  name: 'revised-products',
-                  path: '/products/revisedProducts',
+                  path: '/products/revisedProducts/:id',
                   component: './products/revisedProducts',
                 },
                 {
-                  name: 'inventory',
-                  icon: 'smile',
-                  path: '/products/inventory',
-                  component: './products/inventory',
+                  path: '/products/revised/:id',
+                  component: './products/revisedProduct',
                 },
+                
               ],
             },
             {
               path: '/',
-              redirect: '/dashboard/analysis',
+              redirect: '/dashboard',
               authority: ['admin', 'user'],
             },
-            {
-              component: '404',
-            },
+           
+            
           ],
         },
       ],
@@ -269,7 +245,8 @@ export default {
   },
   manifest: {
     basePath: '/',
-  }, // chainWebpack: webpackPlugin,
+  },
+  // chainWebpack: webpackPlugin,
   publicPath: '/shopify-admin/',
   proxy: {
     '/admin/api/2019-10/': {

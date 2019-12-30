@@ -7,7 +7,7 @@ import Link from 'umi/link';
 @connect(({ products, loading }) => ({
   products: products.products,
   productsCount: products.count,
-  loading: loading.effects[('products/fetch', 'products/delete')],
+  loading: loading.models.products,
   productsValues: products.values,
   productsCurrent: products.current,
   productsColumnKey: products.products,
@@ -43,17 +43,17 @@ class App extends React.Component {
     });
   };
 
-  revised = async () => {
-    const { dispatch } = this.props;
-    console.log(this.state.selectedRowKeys);
+  // revised = async () => {
+  //   const { dispatch } = this.props;
+   
+  //   await dispatch({
+  //     type: 'reviseds/rowKeys',
+  //     payload: { revisedRowKeys: this.state.selectedRowKeys },
+  //   });
 
-    await dispatch({
-      type: 'revised/rowKeys',
-      payload: { revisedRowKeys: this.state.selectedRowKeys },
-    });
-
-    location.hash = '/products/revisedProducts';
-  };
+  //   location.hash = '/products/revisedProducts';
+    
+  // };
 
   onSelectChange = selectedRowKeys => {
     this.setState({
@@ -112,9 +112,32 @@ class App extends React.Component {
         sorter: true,
       },
       {
+        title: 'SKU',
+        dataIndex: 'variants[0].sku',
+        render: (h, record) => {
+          return (
+            <span>
+              {record.variants[0].sku}
+            </span>
+          );
+        },
+      },
+      {
+        width:"150px",
+        title: 'When sold out',
+        dataIndex: 'variants[0].inventory_policy',
+        render: (h, record) => {
+          return (
+            <span>
+              {record.variants[0].inventory_policy=="deny"?"Stop selling":"Continue selling"}
+            </span>
+          );
+        },
+      },
+      {
         title: 'Inventory',
-        dataIndex: 'record.variants',
-        sorter: true,
+        dataIndex: 'variants[0].inventory_quantity',
+       
         render: (h, record) => {
           let num = 0;
           for (let i = 0; i < record.variants.length; i++) {
@@ -123,6 +146,27 @@ class App extends React.Component {
           return (
             <span>
               {num} in stock for {record.variants.length} variants
+              {/* {record.variants[0].inventory_quantity} */}
+            </span>
+          );
+        },
+      },{
+        title: 'Incoming',
+        dataIndex: 'variants[0].grams',
+        render: (h, record) => {
+          return (
+            <span>
+              {record.variants[0].grams}
+            </span>
+          );
+        },
+      },{
+        title: 'Available',
+        dataIndex: 'variants[0].Available',
+        render: (h, record) => {
+          return (
+            <span>
+              {record.variants[0].inventory_quantity}
             </span>
           );
         },
@@ -136,6 +180,15 @@ class App extends React.Component {
         dataIndex: 'vendor',
       },
     ];
+   const  changeLocation = async (e)=>{
+    
+      location.hash = `/products/revised/${e.id}`;
+    }
+    
+    const pathReviseds = {
+      pathname: `/products/revisedProducts/${selectedRowKeys}`,
+     
+    };
     return (
       <div
         style={{
@@ -159,9 +212,12 @@ class App extends React.Component {
           <Button
             style={{ display: !hasSelected ? 'none' : 'block', float: 'left' }}
             disabled={!hasSelected}
-            onClick={this.revised}
+            //onClick={this.revised}
           >
-            Revised
+             <Link
+                to={pathReviseds}>
+                Revised
+              </Link>
           </Button>
           <Button
             style={{
@@ -169,7 +225,7 @@ class App extends React.Component {
               marginBottom: 24,
             }}
           >
-            <Link to={{ pathname: '/products/all-product/new' }}>Add product</Link>
+            <Link to={{ pathname: '/products/allProduct/new' }}>Add product</Link>
           </Button>
           <span
             style={{
@@ -187,6 +243,12 @@ class App extends React.Component {
           onChange={this.handleTableChange}
           loading={loading}
           pagination={paginationProps}
+          onRow={record => {
+            return {
+              onClick: ()=>changeLocation(record), // 点击行
+              //onMouseEnter: () => {cursor:pointer}
+            };
+          }}
         />
       </div>
     );
