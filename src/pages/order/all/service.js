@@ -1,7 +1,7 @@
 import axios from '@/utils/request';
 
 export async function getOrders(params) {
-  return await axios('https://mirror.viralbox.org/xuzyy/admin/api/2019-10/orders.json?limit=10',{
+  return await axios('https://mirror.viralbox.org/xuzyy/admin/api/2019-10/orders.json?limit=10&status=any',{
       params  
   });}  
 export async function changePages(params) {

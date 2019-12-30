@@ -132,6 +132,10 @@ export default {
                   component: './order/all',
                 },
                 {
+                  path: '/order/all/order_detail/:id',
+                  component: './order/all/order_detail',
+                },
+                {
                   name: 'draft',
                   icon: 'smile',
                   path: '/order/draft',

@@ -11,7 +11,9 @@ import {
   Tooltip,
   Col,
   Row,
-  Layout
+  Layout,
+  Modal,
+  Spin
 } from 'antd';
 import { FormattedMessage, formatMessage } from 'umi-plugin-react/locale';
 import React, { Component } from 'react';
@@ -32,40 +34,69 @@ const { Header, Footer, Sider, Content } = Layout;
 class CreateOrder extends Component {
   constructor(props) {
     super(props);
-    this.state={price:0.00,totalprice:0.00,count:1}
+    this.state={price:0.00,totalprice:0.00,count:1,loading: false,loadings:false,
+      visible: false,display:'block',fn:'/',ln:'/',email:null,ordercount:0,note:'',customerid:0}
   }
   
   handleSubmit = e => {
+    e.preventDefault();
     const { dispatch,create:{item,status}} = this.props;
-    console.log(this.props.form.getFieldsValue().first_name);
-    
-    const first_name=this.props.form.getFieldsValue().first_name==undefined?'/':this.props.form.getFieldsValue().first_name;
-    const last_name=this.props.form.getFieldsValue().last_name==undefined?'/':this.props.form.getFieldsValue().last_name;
-      
-    const b={
+    console.log('count',this.state.count);
+    const first_name=this.state.fn
+    const last_name=this.state.ln
+    const email=this.state.email
+     var b=0; 
+    if(this.state.customerid==0){
+        b={
+        "order": {
+          "line_items": [
+            {
+              "product_id": item.variants[0].product_id,
+              "variant_id": item.variants[0].id,
+              "quantity":this.state.count
+            }
+          ],
+          "customer": {  
+            "first_name": first_name,
+            "last_name": last_name,
+            "email":email
+           },
+           "financial_status":status,
+           "note":this.state.note
+        }
+    }    
+    }
+    else{
+      b={
         "order": {
           "line_items": [
             {
               "id": item.variants[0].product_id,
               "variant_id": item.variants[0].id,
-              "quantity": 1
+              "quantity":this.state.count,
             }
           ],
           "customer": {  
-            "first_name": first_name,
-            "last_name": last_name
+            "id":this.state.customerid
            },
            "financial_status":status,
+           "note":this.state.note
         }
     }    
+    }
+    console.log(this.state.customerid,b);
      dispatch({
        type:'create/addorder',
        payload:b
      })
      dispatch({
-       type:'create/fetch'
-     })
-     this.setState({totalprice:0.00});
+      type: 'create/fetch',
+      });
+      this.setState({totalprice:0.00,display:'block',note:'',loadings:true,customerid:0});
+      setTimeout(() => {
+        this.setState({loadings:false});
+      }, 2000);
+
   };
  componentDidMount(){
   const { dispatch } = this.props;
@@ -108,6 +139,66 @@ class CreateOrder extends Component {
    }
     
  }
+ changeFirst=e=>{
+     this.setState({
+       fn:e.target.value
+     })
+ }
+ changeLast=e=>{
+     this.setState({
+      ln:e.target.value
+    }) 
+ }
+ changeEmail=e=>{
+     this.setState({
+      email:e.target.value
+    })
+ }
+ changeNote=e=>{
+  this.setState({
+    note:e.target.value
+  })
+ }
+ close=()=>{
+  this.setState({
+    display:'block'
+  })
+ }
+ getCustomers=()=>{
+     const { dispatch }=this.props
+     
+     dispatch({
+         type:'create/getcustomer'
+     })
+     this.setState({loading:true})
+     setTimeout(() => {
+      this.setState({loading:false});
+    }, 1500);
+ }
+ //model
+ showModal = () => {
+  this.setState({
+    visible: true,fn:'/',ln:'/',email:null,customerid:0
+  });
+};
+changeDisplay=(e)=>{
+  const v=JSON.parse(e.key) 
+  this.setState({  fn:v.first_name,ln:v.last_name,email:v.email,ordercount:v.orders_count,customerid:v.id});
+  setTimeout(() => {
+    this.setState({display:'none'});
+  }, 1000);
+}
+handleOk = () => {
+
+  this.setState({ loading: true  });
+  setTimeout(() => {
+    this.setState({ loading: false, visible: false,display:'none',ordercount:0});
+  }, 3000);
+};
+
+handleCancel = () => {
+  this.setState({ visible: false });
+};
   render() {
     const submitFormLayout = {
       wrapperCol: {
@@ -123,8 +214,10 @@ class CreateOrder extends Component {
     };
     const { submitting } = this.props;
     const { getFieldDecorator } = this.props.form;
-    const { create:{ data:{list},image,item } } = this.props;
-    console.log('item',item);
+    const { create:{ data:{list},image,item,customer} } = this.props;
+    const { visible, loading } = this.state;
+    const noimage='https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=33325274,822918042&fm=26&gp=0.jpg';
+    console.log('item',customer);
   
     
     return (
@@ -141,20 +234,22 @@ class CreateOrder extends Component {
             hideRequiredMark
           >   
             <Card bordered={true}>
+{/* 选择产品 */}
           <FormItem label='订单详情'>       
-           <Select  style={{ width: '600px' }} onChange={this.selectProduct} placeholder='请选择商品'> 
+           <Select  style={{ width: '600px' }} onChange={this.selectProduct} placeholder='请选择商品' showSearch allowClear={true}> 
             {
-              list.map((item,index)=> <Option value={JSON.stringify(item)} key={index}>{item.title}</Option>)
+          list.map((item,index)=> 
+          <Option value={JSON.stringify(item)} key={index}><img style={{width:'20px'}} src={item.image==null?noimage:item.image.src} /> {item.title}</Option>)
             }
           </Select> 
           </FormItem> 
-          
-          <div style={{display:item==0?'none':'block'}}>
+{/* 产品预览 */}
+          <div style={{display: item==0 ?'none':'block'}}>
           <Row>
              <Col style={{display:'flex',}}>
                  <img style={{width:'50px',height:'50px',flex:1,display:'block',marginRight:'10px'}} src={image} />
                  <div style={{flex:3}}>
-                      <a href='#'>{item.title}</a>
+                      <a style={{pointerEvents:'none' }} href='#'>{item.title}</a>
                       <div style={{padding:'5px 0'}}>{item==0?'':item.variants[0].title}</div>
                       <div>   sku: {item==0?'':item.variants[0].sku} </div>
                  </div>
@@ -172,10 +267,10 @@ class CreateOrder extends Component {
              </Col> 
           </Row>
            </div>
-
+{/* note,价格 */}
           <div style={{display:'flex',borderBottom:'1px solid #eee',marginBottom:'10px'}}>
             <FormItem label='Notes' style={{width:'300px',flex:3,marginRight:'50px'}} >
-              {getFieldDecorator('note')(<Input placeholder="add a note...(暂未实现)" />)}
+                  <Input placeholder="add a note..." onBlur={this.changeNote} />
             </FormItem>
              <Row style={{flex:2,padding:'30px'}}>
                <Col style={{display:'flex',justifyContent:'space-between'}}>
@@ -189,36 +284,19 @@ class CreateOrder extends Component {
                </Col>
              </Row>
           </div>
-          
-          
-
-          <Row
-          type='flex'
-          // justify="center"
-          >  
-          <Col span={6} style={{marginRight:'10px'}}>
-            <FormItem >
-              {getFieldDecorator('first_name')(<Input placeholder="姓(选填)" />)}
-            </FormItem>
-           </Col> 
-           <Col span={6}>
-            <FormItem >
-              {getFieldDecorator('last_name')(<Input placeholder="名(选填)" />)}
-            </FormItem>
-         </Col>
-         </Row>
+{/* 付款状态 */}
          <FormItem >
              <Button style={{marginRight:'20px'}} onClick={this.changestatus.bind(this,'paid')}>标记为已付款</Button>
              <Button onClick={this.changestatus.bind(this,'pending')}>标记为待处理</Button>
             </FormItem>
-        
+{/* 提交保存按钮*/}
           <FormItem
               {...submitFormLayout}
               style={{
                 marginTop: 32,
               }}
             >
-              <Button type="primary" htmlType="submit" loading={submitting}>
+              <Button type="primary" htmlType="submit" loading={this.state.loadings}>
                <FormattedMessage id="formandbasic-form.form.submit" />
               </Button>
               <Button
@@ -233,17 +311,82 @@ class CreateOrder extends Component {
           </Form>   
           </div>
 
-
+{/* 创建顾客 */}
           <div className={styles.cus}>
            <Card bordered={true}>
-              <FormItem label="创建顾客">       
-              <Select style={{ width: '200px' }} placeholder='搜索顾客(暂未实现)'>  
-              {/* <Option value='sss'>add</Option>    */}
-             </Select> 
+              <FormItem label="创建顾客">   
+
+              <div style={{display:this.state.display}}>
+               
+                <Select style={{ width: '200px',color:'#ccc' }}  value='搜索顾客' allowClear={true} showSearch onFocus={this.getCustomers} notFoundContent={<div style={{textAlign:'center'}}><Spin  spinning={this.state.loading} /></div>} >  
+
+             {
+            customer.length!=0 &&  <Option value="add a customer">
+            <Button type="link" onClick={this.showModal}> + add a customer </Button>
+              </Option>
+             } 
+              
+           
+                {customer && customer.map((item,index)=>
+                     <Option value={JSON.stringify(item)} key={index} onClick={this.changeDisplay}>
+                       <div style={{display:'flex'}}>
+                           <Icon type="user" style={{color:'skyblue',fontSize:'28px',paddingTop:'8px',paddingRight:'10px'}} /> 
+                           <div style={{display:'flex',flexDirection:'column'}}>
+                             <span>{item.first_name} {item.last_name} </span>
+                             <span>{item.email==null?'no email':item.email}</span>
+                           </div>
+                      
+                       </div>
+                       </Option>
+                )}
+        
+               
+             </Select>
+            
+              </div>
+               
+
+              <div style={{display:this.state.display=='none'?'block':'none'}} >
+               <div><span>{this.state.ordercount} order</span> <span style={{paddingLeft:'100px',cursor:'pointer'}} onClick={this.close} ><Icon type="close" /> </span></div>    
+           
+                  <div>{this.state.fn} {this.state.ln}</div>    
+                  <div>{this.state.email==null?'No email':this.state.email}</div>    
+
+              </div>
+
               </FormItem> 
                </Card>
          </div>
 
+         <Modal
+          visible={visible}
+          title="Create a customer"
+          onOk={this.handleOk}
+          onCancel={this.handleCancel}
+          footer={[
+            <Button key="back" onClick={this.handleCancel}>
+              Return
+            </Button>,
+            <Button key="submit" type="primary" loading={this.state.loading} onClick={this.handleOk}>
+              Submit
+            </Button>,
+          ]}
+        >
+          <div style={{display:'flex',justifyContent:'space-around'}}>
+          <FormItem label='First name'>
+          {getFieldDecorator('first_name')( <Input style={{width:'200px'}} size='large'onBlur={this.changeFirst} />)} 
+           </FormItem>
+           <FormItem label='Last name'>
+           {getFieldDecorator('last_name')( <Input style={{width:'200px'}} size='large'onBlur={this.changeLast} />)}  
+           </FormItem>
+          </div>
+           <FormItem label='Email'>
+           {getFieldDecorator('email')( <Input size='large'onBlur={this.changeEmail} />)} 
+           </FormItem>
+        
+          
+           
+        </Modal>
       </div>
       </PageHeaderWrapper>
 
