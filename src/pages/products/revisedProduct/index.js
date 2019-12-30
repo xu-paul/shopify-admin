@@ -6,9 +6,26 @@ import CardL3 from './CardL3';
 import CardR1 from './CardR1';
 import CardR2 from './CardR2';
 import Button from './Button'
+import { connect } from 'dva';
+@connect(({ reviseds, loading }) => ({
 
+}))
 class RevisedProduct extends Component {
+  componentDidMount() {
+   
+    const { dispatch } = this.props;
+ const id=this.props.location.pathname.substring(18)
+ console.log(id);
+ 
+   dispatch({
+    type: 'revised/fetch',
+    payload: { id },
+  });
   
+  // dispatch({
+  //   type: 'reviseds/fetch',
+  // });
+}
   render() {
     
     return (

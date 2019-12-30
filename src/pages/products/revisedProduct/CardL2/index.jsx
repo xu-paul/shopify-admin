@@ -3,14 +3,18 @@ import { Card, InputNumber } from 'antd';
 import styles from './index.less';
 import { connect } from 'dva';
 @connect(({ revised, loading }) => ({
-  product:revised.product
+  product:revised.product,
+  variants:revised.variants
 }))
 class CardL2 extends React.Component {
-  state = {};
+  state = {
+    price:'',compare_at_price:''
+  };
 
   render() {
    
-    const { product } =this.props;
+    const { product,variants } =this.props;
+    const { price,compare_at_price } =this.state
     const priceChange = (ee,e) => {
       const x=e.replace(/[^0-9.]/ig,"")
       
@@ -21,8 +25,12 @@ class CardL2 extends React.Component {
         });
      
     }
-    console.log(product);
-    
+    if(variants.price!=price){
+      this.setState({price:variants.price})
+    }
+    if(variants.compare_at_price!=compare_at_price){
+      this.setState({compare_at_price:variants.compare_at_price})
+    }
    return (
       <div className={ styles.container }>
         <div id="components-card-demo-simple">
@@ -40,7 +48,8 @@ class CardL2 extends React.Component {
                   formatter={ value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') }
                   parser={ value => value.replace(/\$\s?|(,*)/g, '') }
                   onBlur={(e)=>priceChange("price",e.target.value)}
-                  defaultValue={ Object.keys(product).length==0?'':product.variants[0].price}
+                  defaultValue={ variants.price}
+                  key={variants.price!==price? 'notLoadedYet' : 'loaded'}
                 /></div>
               <div ><p>Compare at price</p>
                 <InputNumber
@@ -48,7 +57,8 @@ class CardL2 extends React.Component {
                   formatter={ value => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') }
                   parser={ value => value.replace(/\$\s?|(,*)/g, '') }
                   onBlur={(e)=>priceChange("compare_at_price",e.target.value)}
-                  defaultValue={ Object.keys(product).length==0?'':product.variants[0].compare_at_price}
+                  defaultValue={ variants.compare_at_price}
+                  key={variants.compare_at_price!==compare_at_price? 'notLoadedYet' : 'loaded'}
                 //onChange={onChange}
                 /></div></div>
                 

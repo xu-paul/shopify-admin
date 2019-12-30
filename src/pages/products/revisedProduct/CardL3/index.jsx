@@ -4,17 +4,18 @@ import styles from './index.less';
 import { connect } from 'dva';
 const { Option } = Select;
 @connect(({ revised, loading }) => ({
-  product:revised.product
+  product:revised.product,
+  variants:revised.variants
 }))
 class CardL3 extends React.Component {
   state = {
-    fulfillment_service:'manual'
+    fulfillment_service:'',sku:'' ,inventory_quantity :''
   };
 
   render() {
     
-    const { fulfillment_service } =this.state
-    const { product } =this.props
+    const { fulfillment_service ,sku ,inventory_quantity } =this.state
+    const { product ,variants} =this.props
     const variantsChange=(name,title)=>{
       const { dispatch } = this.props;
         dispatch({
@@ -26,6 +27,15 @@ class CardL3 extends React.Component {
         
     }
     var x=fulfillment_service=="manual"?'none':'block'
+    if(variants.fulfillment_service!=fulfillment_service){
+      this.setState({fulfillment_service:variants.fulfillment_service})
+    }
+    if(variants.sku!=sku){
+      this.setState({sku:variants.sku})
+    }
+    if(variants.inventory_quantity!=inventory_quantity){
+      this.setState({inventory_quantity:variants.inventory_quantity})
+    }
     return (
       <div className={ styles.container }>
       <div id="components-card-demo-simple">
@@ -38,7 +48,10 @@ class CardL3 extends React.Component {
           
             <div >
               <p>Inventory managed by</p>
-              <Select defaultValue={Object.keys(product).length==0?'':product.variants[0].fulfillment_service} style={{ width: "750px" }} onChange={(value)=>variantsChange("fulfillment_service",value)}>
+              <Select key={variants.fulfillment_service!==fulfillment_service? 'notLoadedYet' : 'loaded'}
+                      defaultValue={variants.fulfillment_service} 
+                      style={{ width: "750px" }} 
+                      onChange={(value)=>variantsChange("fulfillment_service",value)}>
                <Option value="manual">Shopify</Option>
                <Option value="oberlo">Oberlo</Option>
               </Select>
@@ -47,15 +60,19 @@ class CardL3 extends React.Component {
             <div> <div>
               <p>SKU (Stock Keeping Unit)</p>
               <Input
+                key={variants.sku!==sku? 'notLoadedYet' : 'loaded'}
                 style={ { width: '700px' } }
                 onBlur={(e)=>variantsChange("sku",e.target.value)}  
-                defaultValue={Object.keys(product).length==0?'':product.variants[0].sku}
+                defaultValue={variants.sku}
               /></div></div>
               <hr/>
               <p style={ { fontSize: '30px' } }>QUANTITY</p>
               <div >
               <p>Available</p>
-              <InputNumber  defaultValue={Object.keys(product).length==0?'':product.variants[0].old_inventory_quantity} onBlur={(e)=>variantsChange("old_inventory_quantity",e.target.value)} />
+              <InputNumber  
+                  key={variants.inventory_quantity!==inventory_quantity? 'notLoadedYet' : 'loaded'}
+                  defaultValue={variants.inventory_quantity} 
+                  onBlur={(e)=>variantsChange("inventory_quantity",e.target.value)} />
             </div>
         </Card>
       </div>

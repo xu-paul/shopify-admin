@@ -8,10 +8,12 @@ import { connect } from 'dva';
 }))
 class CardL1 extends React.Component {
   state = {
-    content: '' };
+    content: '' ,
+    title:''};
   
   render() {
     const { product }=this.props
+    const { title } =this.state
     const inputChange = (name,title) => {
       const { dispatch } = this.props;
       dispatch({
@@ -19,6 +21,9 @@ class CardL1 extends React.Component {
         payload: { name, title },
       });
 
+  }
+  if(product.title!=title){
+    this.setState({title:product.title})
   }
     return (
       <div className={ styles.container }>
@@ -33,6 +38,7 @@ class CardL1 extends React.Component {
                    id='titleRevisedProduct' 
                    onBlur={()=>inputChange('title',document.getElementById('titleRevisedProduct').value) } 
                   defaultValue={ product.title }
+                  key={product.title!==title? 'notLoadedYet' : 'loaded'}
                    ></Input>
             <p>Description</p>
             <Editor

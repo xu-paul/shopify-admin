@@ -181,11 +181,7 @@ class App extends React.Component {
       },
     ];
    const  changeLocation = async (e)=>{
-    const { dispatch } = this.props;
-    await dispatch({
-      type: 'revised/fetch',
-      payload: { id: e.id },
-    });
+    
       location.hash = `/products/revised/${e.id}`;
     }
     

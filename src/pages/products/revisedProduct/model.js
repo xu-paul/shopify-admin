@@ -10,22 +10,19 @@ const revisedProductModel = {
       addVariants:{
         
       },
-      variants:[]
+      variants:{}
   },
   effects: {
     *fetch({ payload : { id }}, {  put, select, call }){
       const { revised } = yield select();
       const  productID = yield call(getRevised, id);
       const product = productID.data.product;
-      const addContent=revised.addContent
-      const addVariants=revised.addVariants
-      const variants =[]
+      const {addContent,addVariants }=revised
       addContent["id"]=product.id;
-      addVariants["id"]=product.variants[0].id;
-      addVariants["sku"]=product.variants[0].sku;
-     for (let index = 0; index < product.variants.length; index++) {
-      variants.push({"id":product.variants[index].id})
-     }
+      var variants=product.variants[0]
+      addVariants["id"]=variants.id;
+      addVariants["sku"]=variants.sku;
+      
       yield put ({
         type:'fetchProduct',
         payload:{ product, addContent,addVariants,variants}
@@ -57,8 +54,8 @@ const revisedProductModel = {
       const { revised } = yield select()
       const  newProduct=  revised.addContent
       //const PropsNewProduct = Object.getOwnPropertyNames(newProduct);
-      var variants= revised.variants
-      variants[0]=revised.addVariants
+       
+    var  variants=[revised.addVariants]
       newProduct["variants"]=variants
       //for(var i=0 ;i<PropsNewProduct.length;i++){
         //if(newProduct[PropsNewProduct[i]]!==revised.product[PropsNewProduct[i]]){

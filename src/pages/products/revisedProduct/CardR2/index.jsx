@@ -14,14 +14,21 @@ class CardR2 extends React.Component {
   render() {
     const { product } =this.props
     const tagsChange=(name,title)=>{
+      var tags="";
+      for (let index = 0; index < title.length; index++) {
+        tags=tags+title[index]+","
+      };
+      
+      
       const { dispatch } = this.props;
         dispatch({
             type: 'revised/addProperty',
-            payload: { name, title},
+            payload: { name, title:tags},
         });
     }
     const childrens=[];
-    const tags = product=={}?["yyy"]:["yyy"];
+   
+    const tags = product.tags.split(",");
     //product.tags.split(",");
     for(var i=0 ;i<tags.length;i++){
       childrens.push(<Option value={tags[i]} key={tags[i]}>{tags[i]}</Option>)

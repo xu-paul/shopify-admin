@@ -8,11 +8,12 @@ const { Option } = Select;
 }))
 class CardR1 extends React.Component {
   state = {
-    Type:'',Vendor:''
+    Type:'',Vendor:'',vendor:'',product_type:''
   };
 
   render() {
     const { product }= this.props
+    const { Type,Vendor,vendor,product_type} =this.state
     const constChange=(name,title)=>{
      
       const { dispatch } = this.props;
@@ -31,13 +32,19 @@ class CardR1 extends React.Component {
         
     }
     const pushType=()=>{
-        children.push(<Option value={this.state.Type} key={this.state.Type}>{this.state.Type}</Option>)
+        children.push(<Option value={Type} key={Type}>{Type}</Option>)
     }
     const pushVendor=()=>{
-        childrens.push(<Option value={this.state.Vendor} key={this.state.Vendor}>{this.state.Vendor}</Option>)
+        childrens.push(<Option value={Vendor} key={Vendor}>{Vendor}</Option>)
     }
     const children = [<Option value={product.product_type} key={product.product_type}>{product.product_type}</Option>]; 
     const childrens = [<Option value={product.vendor} key={product.vendor}>{product.vendor}</Option>,];
+    if(product.product_type!=product_type){
+      this.setState({product_type:product.product_type})
+    }
+    if(product.vendor!=vendor){
+      this.setState({vendor:product.vendor})
+    }
     return (
       <div className={ styles.container }>
       <div id="components-card-demo-simple">
@@ -50,7 +57,9 @@ class CardR1 extends React.Component {
           
             <div ><div >
               <p>Product type</p>
-              <Select   style={{ width: '100%' }}  
+              <Select   
+              key={product.product_type!==product_type? 'notLoadedYet' : 'loaded'}
+              style={{ width: '100%' }}  
               onChange={(e)=>constChange('product_type',e)} 
               defaultValue={product.product_type}
               >
@@ -72,6 +81,7 @@ class CardR1 extends React.Component {
            <div ><div >
               <p>Vendor</p>
               <Select   
+              key={product.vendor!==vendor? 'notLoadedYet' : 'loaded'}
               style={{ width: '100%' }}  
               onChange={(e)=>constChange('vendor',e)} 
               defaultValue={product.vendor}

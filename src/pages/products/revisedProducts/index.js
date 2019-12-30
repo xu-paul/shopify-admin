@@ -16,9 +16,7 @@ class RevisedProducts extends Component {
       type: 'reviseds/rowKeys',
       payload: { revisedRowKeys: id.split(',') },
     });
-    console.log('====================================');
-    console.log(id.split(','));
-    console.log('====================================');
+    
     dispatch({
       type: 'reviseds/fetch',
     });
