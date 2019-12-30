@@ -1,7 +1,7 @@
-import { addRule,removeRule, updateRule,getDraftOrders } from './service';
+import { addRule,removeRule, updateRule,getCustomers } from './service';
 import { routerRedux } from 'dva/router';
 const Model = {
-  namespace: 'draft',
+  namespace: 'customer',
   state: {
     data: {
       list: [],
@@ -10,13 +10,13 @@ const Model = {
   },
   effects: {
     *fetch({ payload }, { call, put }) {
-      const response = yield call(getDraftOrders, payload);
+      const response = yield call(getCustomers);
       console.log('payload',payload,'res',response);
       
       yield put({
         type: 'save',
         payload: {
-          list: response.data.draft_orders,
+          list: response.data.customers,
           pagination: {}
         },
       });
@@ -50,7 +50,7 @@ const Model = {
     },
     *linkdetail({ payload:id}, { put }) {
       console.log('id',id);
-      yield put(routerRedux.replace(`/order/draft/draft_detail/${id}`));
+      yield put(routerRedux.replace(`/customer/customer_detail/${id}`));
     },
   },
   reducers: {

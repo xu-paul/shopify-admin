@@ -57,4 +57,5 @@ export default {
   'menu.order.all': '所有订单',
   'menu.order.draft': '草稿',
   'menu.order.abandoned': '弃单',
+  'menu.customer': '顾客',
 };
