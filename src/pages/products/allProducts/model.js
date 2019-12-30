@@ -29,7 +29,6 @@ const ProductsModel = {
     },
     *change({ payload: { current, order, values, columnKey } }, { call, put, select }) {
       const { products } = yield select();
-      console.log('123', current, products.current);
       if (parseInt(current) == parseInt(products.current)) {
         if (columnKey == 'title') {
           if (order == 'ascend') {
@@ -121,7 +120,6 @@ const ProductsModel = {
     *delete({ payload: { selectedRowKeys } }, { call }) {
       for (var i = '0'; i < selectedRowKeys.length; i++) {
         yield call(removeProducts, selectedRowKeys[i]);
-        console.log('123', selectedRowKeys[i]);
       }
     },
   },

@@ -3,21 +3,13 @@ import styles from './index.less';
 import { connect } from 'dva';
 import Editable from 'antd-editable';
 
-@connect(({ revised, loading }) => ({
-  revised,
-  loading: loading.effects['revised/fetch'],
+@connect(({ reviseds, loading }) => ({
+  revised:reviseds,
+  loading: loading.models.reviseds,
 }))
 class TableBasic extends React.Component {
-  componentDidMount() {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'revised/fetch',
-    });
-  }
-
-  revisedProducts = (a, aa) => {
-    console.log('aa', revised.products);
-  };
+ 
+ 
   render() {
     const { revised, loading } = this.props;
     var columns = [
@@ -37,18 +29,27 @@ class TableBasic extends React.Component {
     ];
     for (var i = '0'; i < revised.selects.length; i++) {
       columns.push(revised.selects[i]);
-      console.log(columns);
+     
     }
     const data = revised.products;
+    const handleCellChange=(revisedNew)=>{
+      
+      const { dispatch } = this.props;
+      dispatch({
+        type: 'reviseds/revisedNew',
+        payload:{ revisedNew:revisedNew}
+      });
+      
+    }
     return (
-      <div className={styles.container}>
+      <div className={styles.container} style={{backgroundColor:'#fff'}}>
         <div id="components-table-demo-basic">
           <Editable
             columns={columns}
             dataSource={data}
             rowKey={'id'}
             loading={loading}
-            onChange={this.revisedProducts}
+            onCellChange={handleCellChange}
           />
         </div>
       </div>
