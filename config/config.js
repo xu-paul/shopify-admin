@@ -176,28 +176,16 @@ export default {
                   path: '/products/revised/:id',
                   component: './products/revisedProduct',
                 },
-                {
-                  name: 'inventory',
-                  icon: 'smile',
-                  path: '/products/inventory',
-                  component: './products/inventory',
-                },
+                
               ],
             },
             {
               path: '/',
-              redirect: '/dashboard/analysis',
+              redirect: '/dashboard',
               authority: ['admin', 'user'],
             },
-            {
-              name: '分析页',
-              icon: 'smile',
-              path: '/',
-              component: './home/DashboardAnalysis',
-            },
-            {
-              component: '404',
-            },
+           
+            
           ],
         },
       ],
