@@ -27,9 +27,10 @@ const { Option } = Select;
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
 const { Header, Footer, Sider, Content } = Layout;
-@connect(({ create, loading }) => ({
+@connect(({ create,draft_detail, loading }) => ({
   create,
-  loading: loading.effects['create/fetch'],
+  draft_detail,
+  loading: loading.effects['draft_detail/fetch'],
   loadings:loading.effects['create/getcustomer']
 }))
 class CreateOrder extends Component {
@@ -91,6 +92,10 @@ class CreateOrder extends Component {
        payload:b
      })
      dispatch({
+       type:'draft_detail/update',
+       payload:this.props.match.params.id
+     })
+     dispatch({
       type: 'create/fetch',
       });
       this.setState({totalprice:0.00,display:'block',note:'',loadings:true,customerid:0});
@@ -122,7 +127,7 @@ class CreateOrder extends Component {
             "last_name": last_name,
             "email":email
            },
-           "financial_status":status,
+        
            "note":this.state.note
         }
     }    
@@ -140,30 +145,51 @@ class CreateOrder extends Component {
           "customer": {  
             "id":this.state.customerid
            },
-           "financial_status":status,
+        
            "note":this.state.note
         }
     }    
     }
     console.log(this.state.customerid,bb);
      dispatch({
-       type:'create/add_draftorder',
-       payload:bb
+       type:'draft_detail/updatedraft',
+       payload:{id:this.props.match.params.id,bbb:bb}
      })
-     dispatch({
-      type: 'create/fetch',
-      });
-      this.setState({totalprice:0.00,display:'block',note:'',loadings:true,customerid:0});
-      setTimeout(() => {
-        this.setState({loadings:false});
-      }, 2000);
+    //  dispatch({
+    //   type: 'create/fetch',
+    //   });
+    //   this.setState({totalprice:0.00,display:'block',note:'',loadings:true,customerid:0});
+    //   setTimeout(() => {
+    //     this.setState({loadings:false});
+    //   }, 2000);
 
   };
 
  componentDidMount(){
-  const { dispatch } = this.props;
+  const { dispatch } = this.props;  
+  console.log('xxx',this.props.match.params.id);
   dispatch({
     type: 'create/fetch',
+  });
+  dispatch({
+    type: 'draft_detail/fetch',
+    payload:this.props.match.params.id,
+    callback: () => {
+      console.log('back',this.props.draft_detail.list);  
+      this.setState({
+        count:this.props.draft_detail.list.line_items[0].quantity,
+        totalprice:this.props.draft_detail.list.subtotal_price,
+        price:this.props.draft_detail.list.line_items[0].price,
+        fn:this.props.draft_detail.list.customer.first_name,
+        ln:this.props.draft_detail.list.customer.last_name,
+        email:this.props.draft_detail.list.customer.email,
+        display:'none',
+        ordercount:this.props.draft_detail.list.customer.orders_count,
+        customerid:this.props.draft_detail.list.customer.id,
+        note:this.props.draft_detail.list.note
+        
+      });      
+    },
   });
  }
  selectProduct=(val)=>{
@@ -276,16 +302,16 @@ handleCancel = () => {
     };
     const { submitting } = this.props;
     const { getFieldDecorator } = this.props.form;
-    const { create:{ data:{list},image,item,customer},loading,loadings } = this.props;
+    const { create:{ data:{list},image,item,customer},loading,loadings,draft_detail } = this.props;
     const { visible } = this.state;
     const noimage='https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=33325274,822918042&fm=26&gp=0.jpg';
     console.log('item',customer);
   
     
     return (
-      <PageHeaderWrapper content={  <Link to={{pathname:'/order/all'}} >
-       返回订单
-      </Link>} title='创建订单'>
+      <PageHeaderWrapper content={  <Link to={{pathname:'/order/draft'}}>
+       返回草稿
+      </Link>} title={draft_detail?draft_detail.list.name:'订单详情'}>
         
          <div className={styles.whorder}>
        <div className={styles.produ}>
@@ -328,9 +354,9 @@ handleCancel = () => {
           </Row>
            </div>
 {/* note,价格 */}
-          <div style={{display:'flex',borderBottom:'1px solid #ccc',marginBottom:'10px'}}>
+          <div style={{display:'flex',borderBottom:'1px solid #eee',marginBottom:'10px'}}>
             <FormItem label='Notes' style={{width:'300px',flex:3,marginRight:'50px'}} >
-                  <Input placeholder="add a note..." onBlur={this.changeNote} />
+                  <Input placeholder="add a note..." onBlur={this.changeNote} defaultValue={this.state.note} />
             </FormItem>
              <Row style={{flex:2,padding:'30px'}}>
                <Col style={{display:'flex',justifyContent:'space-between'}}>
@@ -346,10 +372,10 @@ handleCancel = () => {
           </div>
 {/* 付款状态 */}
          <FormItem >
-             <Button type="dashed"  style={{marginRight:'20px'}} onClick={this.changestatus.bind(this,'paid')}>Mask as paid</Button>
-             <Button type="dashed"  onClick={this.changestatus.bind(this,'pending')}>Mask as pending</Button>
+             <Button type='dashed' style={{marginRight:'20px'}} onClick={this.changestatus.bind(this,'paid')}>Mask as paid</Button>
+             <Button type='dashed' onClick={this.changestatus.bind(this,'pending')}>Mask as pending</Button>
             </FormItem>
-{/* 提交保存按钮*/}
+{/* 创建更新按钮*/}
           <FormItem
               {...submitFormLayout}
               style={{
@@ -359,8 +385,8 @@ handleCancel = () => {
               <Button type="primary" htmlType="submit" loading={this.state.loadings}>
               创建订单
               </Button>
-              <Button type="primary" style={{marginLeft: 8,}} onClick={this.saveDraft.bind(this)}>
-                保存草稿
+              <Button style={{marginLeft: 8,}} onClick={this.saveDraft.bind(this)}>
+                更新草稿
               </Button>
             </FormItem>  
               </Card>

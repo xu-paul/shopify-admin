@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { fakeSubmitForm,getProducts,addOrder,getCustomers } from './service';
+import {getProducts,addOrder,getCustomers,addDraftOrder } from './service';
 
 const Model = {
   namespace: 'create',
@@ -13,10 +13,6 @@ const Model = {
     customer:[],
   },
   effects: {
-    *submitRegularForm({ payload }, { call }) {
-      yield call(fakeSubmitForm, payload);
-      message.success('提交成功');
-    },
     *fetch(_,{call,put,select}){
        const res=yield call(getProducts);
        console.log(res);
@@ -63,8 +59,15 @@ const Model = {
        yield call(addOrder,payload);
        console.log('success');
        message.success('创建成功');
-   
     },
+    *add_draftorder({payload},{call,put}){  
+         console.log('drafttt',payload);
+           
+       yield call(addDraftOrder,payload);
+       console.log('success');
+       message.success('保存成功');
+    },
+
     *getcustomer({payload},{call,put}){    
        const res= yield call(getCustomers);
        console.log('ccc',res.data.customers)

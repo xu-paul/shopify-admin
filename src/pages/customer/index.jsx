@@ -34,11 +34,11 @@ const getValue = obj =>
     .join(',');
 
 /* eslint react/no-multi-comp:0 */
-@connect(({ draft, loading }) => ({
-  draft,
-  loading: loading.models.draft,
+@connect(({ customer, loading }) => ({
+  customer,
+  loading: loading.models.customer,
 }))
-class Draft extends Component {
+class Customer extends Component {
   state = {
     modalVisible: false,
     updateModalVisible: false,
@@ -50,29 +50,23 @@ class Draft extends Component {
 
   columns = [
     {
-      title: 'Draft',
-      dataIndex: 'name',
-      render:(val)=>val
-    },
-    {
-      title: 'Date',
-      dataIndex: 'created_at',
-      render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
-    },
-    {
       title: 'Customer',
-      dataIndex: 'customer',
-    render: (val,record) => (val?`${val.first_name} ${record.customer.last_name}`:'/ /'),
+      dataIndex: 'first_name',
+      render: (val,record) => 
+      ( <div>
+        <Icon type="user" style={{color:'skyblue',fontSize:'28px',paddingRight:'10px'}} />
+        {val?`${val} ${record.last_name}`:'/ /'}
+        </div> ),
+       
     },
     {
-      title: 'status',
-      dataIndex: 'status',
-    render: val => val,
+      title: 'orders_count',
+      dataIndex: 'orders_count',
+      render: val => ( <span>{val} order</span>  )
     },
-     
     {
-      title: 'Total',
-      dataIndex: 'total_price',
+      title: 'total_spent',
+      dataIndex: 'total_spent',
       render: (val, record) => currencyFormatter.format(val, {code: record.currency})
     }
     
@@ -81,13 +75,13 @@ class Draft extends Component {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'draft/fetch',
+      type: 'customer/fetch',
     });
   }
   linkDetail=(id)=>{
     const { dispatch } = this.props; 
     dispatch({
-      type: 'draft/linkdetail',
+      type: 'customer/linkdetail',
       payload:id
     });  
   } 
@@ -294,7 +288,7 @@ class Draft extends Component {
 
   render() {
     const {
-      draft: { data },
+      customer: { data },
       loading,
     } = this.props;
     console.log('data',data);
@@ -365,4 +359,4 @@ class Draft extends Component {
   }
 }
 
-export default Form.create()(Draft);
+export default Form.create()(Customer);

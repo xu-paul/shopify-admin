@@ -13,7 +13,8 @@ import {
   Modal,
   Spin,
   Timeline,
-  Tree
+  Tree,
+  Table
 } from 'antd';
 import { FormattedMessage, formatMessage } from 'umi-plugin-react/locale';
 import React, { Component } from 'react';
@@ -21,6 +22,7 @@ import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { connect } from 'dva';
 import styles from './style.less';
 import  moment from 'moment';
+import Link from 'umi/link';
 const FormItem = Form.Item;
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -29,7 +31,7 @@ const { confirm}=Modal;
 const { TreeNode } = Tree;
 @connect(({detail,loading})=>({
    detail,
-   loading:loading.models.detail
+   loadings:loading.effects['detail/fetch']
 }))
 
 
@@ -68,7 +70,7 @@ class Detail extends Component {
     const ff={
       "order": {
         "id": this.props.match.params.id,
-        "fulfillment_status":"fulfilled"
+        "fulfillment_status":"shipped"
       }
     }
     confirm({
@@ -86,12 +88,10 @@ class Detail extends Component {
   }
   getData=()=>{
      var date=new Date();
-     var d=`${date.getFullYear()}-${date.getMonth()}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getMinutes()}`;
+     var d=`${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getMinutes()}`;
      return  d
   }
-  changeNote=()=>{ 
-    var nowDate =this.getData()
-     console.log(nowDate);     
+  changeNote=()=>{  
     const { dispatch } =this.props;
     const id=this.props.match.params.id;
     const that=this;
@@ -156,9 +156,7 @@ class Detail extends Component {
 
 
   changeEmail=()=>{ 
-    const { getFieldDecorator } = this.props.form;
-    console.log('ssss',getFieldDecorator);
-    
+    let newshow=this.state.show;  
     const { dispatch,detail:{list} } =this.props;
     const id=this.props.match.params.id;
     const idc=list.customer.id
@@ -172,6 +170,21 @@ class Detail extends Component {
       </div>,
       width:'440px',     
       onOk(){
+        newshow.unshift(<Timeline.Item >
+          <Tree   switcherIcon={<Icon type="down" />}>
+         <TreeNode title={
+            <div style={{display:'flex',justifyContent:'space-between',width:'576px'}}>
+             <span> xzy edited the customer on this order </span> 
+             <span style={{marginLeft:'5px'}} >{that.getData()}</span>   
+             </div>
+         } > 
+         <TreeNode title='Customer'/>
+         <TreeNode title={that.state.email}/>
+         </TreeNode>
+         </Tree> 
+         </Timeline.Item>
+       );
+       console.log(newshow);
         that.setState({
          loading2:true
         });
@@ -190,7 +203,7 @@ class Detail extends Component {
                 },
                 callback: () => {
                   that.setState({
-                    email:'',loading2:false
+                    email:'',loading2:false,show:newshow
                   });      
                 },
              })
@@ -207,18 +220,22 @@ class Detail extends Component {
    }
   render() {     
     const { submitting } = this.props;
-    const { detail:{list,src}} =this.props;
+    const { detail:{list,src},loadings} =this.props;
     const noimg='https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=33325274,822918042&fm=26&gp=0.jpg'
     console.log('note',list.note,list);
     return (
 //  页头     
-      <PageHeaderWrapper title='订单详情' content={
+      <Spin spinning={loadings} >
+      <PageHeaderWrapper title='订单详情'  content={
+        <div>
       <div style={{display:'flex',alignItems:'center',color:'black'}}>
         <h1 style={{fontSize:'30px',padding:'10px 8px 0 0'}}>{list.name}</h1> 
         <div style={{display:'flex',}}> {moment(list.created_at).format('YYYY-MM-DD HH:mm:ss')}</div>
         <Badge style={{margin:'0 10px'}} status={list.financial_status=='paid'?"success":"processing"} text={list.financial_status} className={styles.payment} />
         <Badge status={list.fulfillment_status=='fulfilled'?"processing":"warning"} text={list.fulfillment_status=='fulfilled'?'fulfilled': 'Unfulfill'} className={styles.fulfillment} />
       </div>
+       <Link to={{pathname:'/order/all'}}>返回订单</Link>
+       </div>
       }>
 
 
@@ -226,7 +243,7 @@ class Detail extends Component {
         <div style={{flex:7}}>
 
 {/* fulfill */}
-  { list.length!=0 &&    <Card bordered={true} style={{margin:'0 20px'}}>
+  { list.length!=0 &&    <Card bordered={true} style={{margin:'0 20px'}} loading={loadings}> 
           <div style={{marginBottom:'10px'}}>
               <Icon style={{fontSize:'30px',margin:' 5px 10px 0 0'}} type="check-circle" theme="twoTone" twoToneColor={list.fulfillment_status==null?"#ccc":"#52c41a"} />
               <span style={{fontSize:'18px',color:'black'}}>{list.fulfillment_status==null?'Unfulfill':list.fulfillment_status} {list.length!==0 && `(${list.line_items[0].quantity})`}</span>
@@ -249,13 +266,13 @@ class Detail extends Component {
                  
               </div>
 
-                <div style={{textAlign:'right',paddingTop:'20px'}}>
+                {/* <div style={{textAlign:'right',paddingTop:'20px'}}>
               <Button size='large' type="primary" onClick={this.changefulfill.bind(this,list.fulfillment_status==null?'n':list.fulfillment_status)} >Mask as {list.fulfillment_status==null?'fulfilled':'Unfulfill'} </Button>
-                </div> 
+                </div>  */}
         </Card>}
         
 {/* paid_status */}
-     {list.length!=0 &&  <Card bordered={true} style={{margin:'20px 20px 0',color:'black'}}>
+     {list.length!=0 &&  <Card bordered={true} style={{margin:'20px 20px 0',color:'black'}} loading={loadings}>
           <div>
               <Icon style={{fontSize:'30px',margin:' 5px 10px 25px 0'}} type="check-circle" theme="twoTone" twoToneColor={list.financial_status=='paid'?"#52c41a":"#ccc"} />
               <span style={{fontSize:'18px',color:'black'}}>{list.financial_status=='paid'?'Paid':'Payment pending'} </span>
@@ -281,11 +298,11 @@ class Detail extends Component {
          <span>{list.financial_status=='paid'?`$${list.subtotal_price}`:`$0.00`}</span>
           </div>
            
-          <div style={{textAlign:'right',paddingTop:'20px',display:list.financial_status=='paid'?'none':'block'}}>
+          {/* <div style={{textAlign:'right',paddingTop:'20px',display:list.financial_status=='paid'?'none':'block'}}>
               <Button size='large' type="primary" >
                Mask as {list.financial_status=='paid'?'pending':'paid '} 
               </Button>
-          </div> 
+          </div>  */}
         </Card>}
 
  {/* Timeline*/}
@@ -304,7 +321,7 @@ class Detail extends Component {
        <div style={{flex:3}}>
 
 {/* Note */}
-      {list.length!=0 &&    <Card bordered={true} style={{marginBottom:'20px'}} >
+      {list.length!=0 &&    <Card bordered={true} style={{marginBottom:'20px'}} loading={loadings} >
          
           <div>
              
@@ -324,7 +341,7 @@ class Detail extends Component {
           </div>
         </Card>}
 {/* Customer */}
-    {list.length!=0 && <Card bordered={true}>
+    {list.length!=0 && <Card bordered={true} loading={loadings}>
           <div>
                
           <div style={{display:'flex',justifyContent:'space-between',fontWeight:'bold',alignItems:'center',marginBottom:'15px'}}>
@@ -355,7 +372,7 @@ class Detail extends Component {
 
 
 
-      </PageHeaderWrapper>
+      </PageHeaderWrapper></Spin>
     );
   }
 }
