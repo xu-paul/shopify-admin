@@ -1,0 +1,6 @@
+.container :global .ant-btn {
+  margin-right: 8px;
+}
+.container :global .ant-btn-group > .ant-btn {
+  margin-right: 0;
+}
