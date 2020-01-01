@@ -29,6 +29,20 @@ const { RangePicker } = DatePicker;
 const { TextArea } = Input;
 const { confirm}=Modal;
 const { TreeNode } = Tree;
+const routes = [
+  {
+    path: '/',
+    breadcrumbName: '首页',
+  },
+  {
+    path: '/order/all',
+    breadcrumbName: '订单',
+  },
+  {
+    path: '/order/order_detial',
+    breadcrumbName: '订单详情',
+  },
+];
 @connect(({detail,loading})=>({
    detail,
    loadings:loading.effects['detail/fetch']
@@ -225,8 +239,8 @@ class Detail extends Component {
     console.log('note',list.note,list);
     return (
 //  页头     
-      <Spin spinning={loadings} >
-      <PageHeaderWrapper title='订单详情'  content={
+     
+      <PageHeaderWrapper breadcrumb={{routes}} title='订单详情'  content={
         <div>
       <div style={{display:'flex',alignItems:'center',color:'black'}}>
         <h1 style={{fontSize:'30px',padding:'10px 8px 0 0'}}>{list.name}</h1> 
@@ -238,7 +252,7 @@ class Detail extends Component {
        </div>
       }>
 
-
+ <Spin spinning={loadings} >
     <div style={{display:'flex'}}>
         <div style={{flex:7}}>
 
@@ -371,8 +385,8 @@ class Detail extends Component {
 
 
 
-
-      </PageHeaderWrapper></Spin>
+</Spin>
+      </PageHeaderWrapper>
     );
   }
 }

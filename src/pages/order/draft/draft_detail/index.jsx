@@ -27,6 +27,20 @@ const { Option } = Select;
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
 const { Header, Footer, Sider, Content } = Layout;
+const routes = [
+  {
+    path: '/',
+    breadcrumbName: '首页',
+  },
+  {
+    path: '/order/draft',
+    breadcrumbName: '草稿',
+  },
+  {
+    path: '/order/draft/draft_detail',
+    breadcrumbName: '草稿详情',
+  },
+];
 @connect(({ create,draft_detail, loading }) => ({
   create,
   draft_detail,
@@ -37,7 +51,7 @@ class CreateOrder extends Component {
   constructor(props) {
     super(props);
     this.state={price:0.00,totalprice:0.00,count:1,loading: false,loadings:false,
-      visible: false,display:'block',fn:'/',ln:'/',email:null,ordercount:0,note:'',customerid:0}
+      visible: false,display:'block',fn:'/',ln:'/',email:null,ordercount:0,note:'',customerid:0,status:''}
   }
   
   handleSubmit = e => {
@@ -186,8 +200,8 @@ class CreateOrder extends Component {
         display:'none',
         ordercount:this.props.draft_detail.list.customer.orders_count,
         customerid:this.props.draft_detail.list.customer.id,
-        note:this.props.draft_detail.list.note
-        
+        note:this.props.draft_detail.list.note,
+        status:this.props.draft_detail.list.status
       });      
     },
   });
@@ -309,7 +323,7 @@ handleCancel = () => {
   
     
     return (
-      <PageHeaderWrapper content={  <Link to={{pathname:'/order/draft'}}>
+      <PageHeaderWrapper breadcrumb={{routes}} content={  <Link to={{pathname:'/order/draft'}}>
        返回草稿
       </Link>} title={draft_detail?draft_detail.list.name:'订单详情'}>
         
@@ -321,13 +335,16 @@ handleCancel = () => {
           >   
             <Card bordered={true} loading={loading}>
 {/* 选择产品 */}
-          <FormItem label='订单详情'>       
-           <Select  style={{ width: '600px' }} onChange={this.selectProduct} placeholder='请选择商品' showSearch allowClear={true}> 
+          <FormItem label='订单详情'>    
+          <div style={{display:this.state.status=='completed'?'none':'block'}}>
+              <Select  style={{ width: '600px' }} onChange={this.selectProduct} placeholder='请选择商品' showSearch allowClear={true}> 
             {
           list.map((item,index)=> 
           <Option value={JSON.stringify(item)} key={index}><img style={{width:'20px'}} src={item.image==null?noimage:item.image.src} /> {item.title}</Option>)
             }
           </Select> 
+          </div>   
+         
           </FormItem> 
 {/* 产品预览 */}
           <div style={{display: item==0 ?'none':'block'}}>
@@ -382,12 +399,14 @@ handleCancel = () => {
                 marginTop: 32,
               }}
             >
-              <Button type="primary" htmlType="submit" loading={this.state.loadings}>
+              <div style={{display:this.state.status=='completed'?'none':'block'}}>
+                  <Button type="primary" htmlType="submit" loading={this.state.loadings} >
               创建订单
               </Button>
               <Button style={{marginLeft: 8,}} onClick={this.saveDraft.bind(this)}>
                 更新草稿
               </Button>
+              </div>
             </FormItem>  
               </Card>
           </Form>   

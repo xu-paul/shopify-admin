@@ -27,6 +27,20 @@ const { Option } = Select;
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
 const { Header, Footer, Sider, Content } = Layout;
+const routes = [
+  {
+    path: '/',
+    breadcrumbName: '首页',
+  },
+  {
+    path: '/order/all',
+    breadcrumbName: '订单',
+  },
+  {
+    path: '/order/draft/create',
+    breadcrumbName: '创建订单',
+  },
+];
 @connect(({ create, loading }) => ({
   create,
   loading: loading.effects['create/fetch'],
@@ -283,7 +297,7 @@ handleCancel = () => {
   
     
     return (
-      <PageHeaderWrapper content={  <Link to={{pathname:'/order/all'}} >
+      <PageHeaderWrapper breadcrumb={{routes}} content={  <Link to={{pathname:'/order/all'}} >
        返回订单
       </Link>} title='创建订单'>
         

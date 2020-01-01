@@ -164,6 +164,10 @@ export default {
               component: './customer',
             },
             {
+              path: '/customer/new',
+              component: './customer/new',
+            },
+            {
               path: '/customer/customer_detail/:id',
               component: './customer/customer_detail',
             },

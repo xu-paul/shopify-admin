@@ -29,7 +29,6 @@ const Model = {
     },
     *update({payload},{put,call}){
           yield call(upDraftStatus,payload);
-          message.success('创建成功');
           yield put(routerRedux.push('/order/draft'))  
     },
     *updatedraft({payload:{id,bbb}},{put,call}){

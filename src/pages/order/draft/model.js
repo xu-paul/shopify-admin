@@ -1,4 +1,4 @@
-import { addRule,removeRule, updateRule,getDraftOrders } from './service';
+import { getDraftOrders,removeDraftOrders } from './service';
 import { routerRedux } from 'dva/router';
 const Model = {
   namespace: 'draft',
@@ -21,33 +21,15 @@ const Model = {
         },
       });
     },
-
-    *add({ payload, callback }, { call, put }) {
-      const response = yield call(addRule, payload);
+    *remove({ payload: { id }, callback }, { call, put }) {
+      for (let i = 0; i < id.length; i++) {
+        yield call(removeDraftOrders, id[i]);
+      }
       yield put({
-        type: 'save',
-        payload: response,
+        type: 'fetch'
       });
       if (callback) callback();
-    },
-
-    *remove({ payload, callback }, { call, put }) {
-      const response = yield call(removeRule, payload);
-      yield put({
-        type: 'save',
-        payload: response,
-      });
-      if (callback) callback();
-    },
-
-    *update({ payload, callback }, { call, put }) {
-      const response = yield call(updateRule, payload);
-      yield put({
-        type: 'save',
-        payload: response,
-      });
-      if (callback) callback();
-    },
+    },  
     *linkdetail({ payload:id}, { put }) {
       console.log('id',id);
       yield put(routerRedux.replace(`/order/draft/draft_detail/${id}`));

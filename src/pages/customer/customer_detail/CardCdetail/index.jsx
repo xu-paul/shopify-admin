@@ -76,7 +76,7 @@ class Index extends Component {
           >
             <div style={{display:'flex',justifyContent:'space-around'}}>
               <div>
-                    <Button type='link' onClick={this.linkorder.bind(this,list.last_order_id)}>Last Order</Button>
+                    <Button type='link' disabled={list.last_order_id?false:true} onClick={this.linkorder.bind(this,list.last_order_id)}>Last Order</Button>
                     <div style={{padding:'10px 0 0',color:'black'}}>{moment(list.created_at).format('YYYY-MM-DD HH:mm:ss')}</div> 
               </div>
           

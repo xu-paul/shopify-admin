@@ -27,7 +27,21 @@ import styles from './style.less';
 import Link from 'umi/link'
 const FormItem = Form.Item;
 const { Option } = Select;
-
+const routes = [
+  {
+    path: '/',
+    breadcrumbName: '首页',
+  },
+  {
+    path: '/order/all',
+    breadcrumbName: '订单',
+  },
+  {
+    path: '/order/draft',
+    breadcrumbName: '草稿',
+  },
+ 
+];
 const getValue = obj =>
   Object.keys(obj)
     .map(key => obj[key])
@@ -148,9 +162,9 @@ class Draft extends Component {
     switch (e.key) {
       case 'remove':
         dispatch({
-          type: 'abandoned/remove',
+          type: 'draft/remove',
           payload: {
-            key: selectedRows.map(row => row.key),
+            id: selectedRows.map(row => row.id),
           },
           callback: () => {
             this.setState({
@@ -315,7 +329,7 @@ class Draft extends Component {
       handleUpdate: this.handleUpdate,
     };
     return (
-      <PageHeaderWrapper>
+      <PageHeaderWrapper breadcrumb={{routes}}>
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>

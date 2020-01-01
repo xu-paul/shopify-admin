@@ -21,6 +21,20 @@ const FormItem = Form.Item;
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
+const routes = [
+  {
+    path: '/',
+    breadcrumbName: '首页',
+  },
+  {
+    path: '/customer',
+    breadcrumbName: '顾客',
+  },
+  {
+    path: '/customer/new',
+    breadcrumbName: '顾客详情',
+  },
+];
 @connect(({ cdetail, loading }) => ({
   cdetail,
   loading: loading.models.cdetail,
@@ -40,6 +54,7 @@ class Cdetail extends Component {
     return (
       <PageHeaderWrapper
         title={<h1>{list.first_name} {list.last_name}</h1>}
+        breadcrumb={{routes}}
         content={
           <Link
             to={{

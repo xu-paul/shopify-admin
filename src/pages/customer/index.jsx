@@ -138,13 +138,20 @@ class Customer extends Component {
     const { dispatch } = this.props;
     const { selectedRows } = this.state;
     if (!selectedRows) return;
-
+    console.log(',,',selectedRows);
+    for(let i=0;i<selectedRows.length;i++){
+      if(selectedRows[i].orders_count!==0){   
+          message.warn('只能删除订单为0的顾客');
+          return;
+      }
+    }
+    
     switch (e.key) {
       case 'remove':
         dispatch({
-          type: 'abandoned/remove',
+          type: 'customer/remove',
           payload: {
-            key: selectedRows.map(row => row.key),
+            id: selectedRows.map(row => row.id),
           },
           callback: () => {
             this.setState({
@@ -223,75 +230,18 @@ class Customer extends Component {
     this.handleUpdateModalVisible();
   };
 
-  renderSimpleForm() {
-    const { form } = this.props;
-    const { getFieldDecorator } = form;
-    return (
-      <Form onSubmit={this.handleSearch} layout="inline">
-        <Row
-          gutter={{
-            md: 8,
-            lg: 24,
-            xl: 48,
-          }}
-        >
-         
-          <Col md={8} sm={24}>
-            <FormItem label="状态">
-              {getFieldDecorator('status')(
-                <Select
-                  placeholder="请选择"
-                  style={{
-                    width: '200px',
-                  }}
-                >
-                  <Option value="open">open</Option>
-                  <Option value="completed">completed</Option>
-                </Select>,
-              )}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <span className={styles.submitButtons}>
-              <Button type="primary" htmlType="submit">
-                查询
-              </Button>
-              <Button
-                style={{
-                  marginLeft: 8,
-                }}
-                onClick={this.handleFormReset}
-              >
-                重置
-              </Button>
-              {/* <a
-                style={{
-                  marginLeft: 8,
-                }}
-                onClick={this.toggleForm}
-              >
-                展开 <Icon type="down" />
-              </a> */}
-            </span>
-          </Col>
-        </Row>
-      </Form>
-    );
-  }
+
 
   
 
-  renderForm() {
-    const { expandForm } = this.state;
-    return expandForm ? this.renderAdvancedForm() : this.renderSimpleForm();
-  }
+ 
 
   render() {
     const {
       customer: { data },
       loading,
     } = this.props;
-    console.log('data',data);
+    console.log('data',data.list);
     
     const { selectedRows, modalVisible, updateModalVisible, stepFormValues } = this.state;
     const menu = (
@@ -309,15 +259,15 @@ class Customer extends Component {
       handleUpdate: this.handleUpdate,
     };
     return (
-      <PageHeaderWrapper>
+      <PageHeaderWrapper >
         <Card bordered={false}>
           <div className={styles.tableList}>
-            <div className={styles.tableListForm}>{this.renderForm()}</div>
+            {/* <div className={styles.tableListForm}>{this.renderForm()}</div> */}
             <div className={styles.tableListOperator}>
             <Link to={
-                {pathname:'/order/draft/create'}
+                {pathname:'/customer/new'}
               }>
-               添加订单
+               添加顾客
               </Link>
               {selectedRows.length > 0 && (
                 <span>

@@ -123,11 +123,7 @@ const Model = {
 
     *remove({ payload: { id }, callback }, { call, put }) {
       for (let i = 0; i < id.length; i++) {
-        let response = yield call(removeOrders, id[i]);
-        yield put({
-          type: 'save',
-          payload: response,
-        });
+        yield call(removeOrders, id[i]);
       }
       const res = yield call(getOrders);
       yield put({

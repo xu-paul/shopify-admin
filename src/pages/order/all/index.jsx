@@ -24,12 +24,24 @@ import CreateForm from './components/CreateForm';
 import StandardTable from './components/StandardTable';
 import UpdateForm from './components/UpdateForm';
 import styles from './style.less';
-import  {routes}  from '../../.umi/router';  
 import Link from 'umi/link'
 import { log } from 'util';
 const FormItem = Form.Item;
 const { Option } = Select;
-
+const routes = [
+  {
+    path: '/',
+    breadcrumbName: '首页',
+  },
+  {
+    path: '/order/all',
+    breadcrumbName: '订单',
+  },
+  {
+    path: '/order/all',
+    breadcrumbName: '所有订单',
+  },
+];
 const getValue = obj =>
   Object.keys(obj)
     .map(key => obj[key])
@@ -376,7 +388,7 @@ class Order extends Component {
     };
     return (
       
-      <PageHeaderWrapper >
+      <PageHeaderWrapper breadcrumb={{routes}} >
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>

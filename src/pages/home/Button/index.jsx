@@ -38,7 +38,7 @@ class HomeButton extends Component {
                 <Link to="/customer"> There were {Ccount} customers</Link>
             </Button>
             <Button block>
-            <Link to="/order/draft/create"> Add customer</Link>
+            <Link to="/customer/new"> Add customer</Link>
             </Button>
            
           </div>
