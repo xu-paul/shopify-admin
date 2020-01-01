@@ -1,5 +1,5 @@
-import { addRule, queryRule, removeRule, updateRule } from './service';
-import {getCheckouts} from '@/services/api'
+import { getDraftOrders,removeDraftOrders } from './service';
+import { routerRedux } from 'dva/router';
 const Model = {
   namespace: 'draft',
   state: {
@@ -10,41 +10,29 @@ const Model = {
   },
   effects: {
     *fetch({ payload }, { call, put }) {
-      const response = yield call(getCheckouts, payload);
+      const response = yield call(getDraftOrders, payload);
+      console.log('payload',payload,'res',response);
+      
       yield put({
         type: 'save',
         payload: {
-          list: response.data.checkouts,
+          list: response.data.draft_orders,
           pagination: {}
         },
       });
     },
-
-    *add({ payload, callback }, { call, put }) {
-      const response = yield call(addRule, payload);
+    *remove({ payload: { id }, callback }, { call, put }) {
+      for (let i = 0; i < id.length; i++) {
+        yield call(removeDraftOrders, id[i]);
+      }
       yield put({
-        type: 'save',
-        payload: response,
+        type: 'fetch'
       });
       if (callback) callback();
-    },
-
-    *remove({ payload, callback }, { call, put }) {
-      const response = yield call(removeRule, payload);
-      yield put({
-        type: 'save',
-        payload: response,
-      });
-      if (callback) callback();
-    },
-
-    *update({ payload, callback }, { call, put }) {
-      const response = yield call(updateRule, payload);
-      yield put({
-        type: 'save',
-        payload: response,
-      });
-      if (callback) callback();
+    },  
+    *linkdetail({ payload:id}, { put }) {
+      console.log('id',id);
+      yield put(routerRedux.replace(`/order/draft/draft_detail/${id}`));
     },
   },
   reducers: {

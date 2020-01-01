@@ -149,7 +149,7 @@ class AdvancedSearchForm extends React.Component {
                 <Select
                   placeholder="Select a value"
                   style={{
-                    width: '100%',
+                    width: '200px',
                   }}
                 >
                   <Option value="Select">Select a value</Option>
@@ -171,6 +171,7 @@ class AdvancedSearchForm extends React.Component {
             lg: 24,
             xl: 48,
           }}
+          style={{marginTop:"50px"}}
         >
           <Col md={8} sm={24}>
             <FormItem label="Product vendor">
@@ -178,7 +179,7 @@ class AdvancedSearchForm extends React.Component {
                 <Select
                   placeholder="Select a value"
                   style={{
-                    width: '100%',
+                    width: '200px',
                   }}
                 >
                   <Option value="">Select a value</Option>
@@ -194,7 +195,7 @@ class AdvancedSearchForm extends React.Component {
                 <Select
                   placeholder="Select a value"
                   style={{
-                    width: '100%',
+                    width: '200px',
                   }}
                 >
                   <Option value="">Select a value</Option>

@@ -27,9 +27,24 @@ const { Option } = Select;
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
 const { Header, Footer, Sider, Content } = Layout;
+const routes = [
+  {
+    path: '/',
+    breadcrumbName: '首页',
+  },
+  {
+    path: '/order/all',
+    breadcrumbName: '订单',
+  },
+  {
+    path: '/order/draft/create',
+    breadcrumbName: '创建订单',
+  },
+];
 @connect(({ create, loading }) => ({
   create,
-  loading: loading.models.create,
+  loading: loading.effects['create/fetch'],
+  loadings:loading.effects['create/getcustomer']
 }))
 class CreateOrder extends Component {
   constructor(props) {
@@ -98,6 +113,67 @@ class CreateOrder extends Component {
       }, 2000);
 
   };
+  saveDraft = e => {
+    e.preventDefault();
+    const { dispatch,create:{item,status}} = this.props;
+    console.log('count',this.state.count);
+    const first_name=this.state.fn
+    const last_name=this.state.ln
+    const email=this.state.email
+     var bb=0; 
+    if(this.state.customerid==0){
+        bb={
+        "draft_order": {
+          "line_items": [
+            {
+              "product_id": item.variants[0].product_id,
+              "variant_id": item.variants[0].id,
+              "quantity":this.state.count
+            }
+          ],
+          "customer": {  
+            "first_name": first_name,
+            "last_name": last_name,
+            "email":email
+           },
+           "financial_status":status,
+           "note":this.state.note
+        }
+    }    
+    }
+    else{
+      bb={
+        "draft_order": {
+          "line_items": [
+            {
+              "id": item.variants[0].product_id,
+              "variant_id": item.variants[0].id,
+              "quantity":this.state.count,
+            }
+          ],
+          "customer": {  
+            "id":this.state.customerid
+           },
+           "financial_status":status,
+           "note":this.state.note
+        }
+    }    
+    }
+    console.log(this.state.customerid,bb);
+     dispatch({
+       type:'create/add_draftorder',
+       payload:bb
+     })
+     dispatch({
+      type: 'create/fetch',
+      });
+      this.setState({totalprice:0.00,display:'block',note:'',loadings:true,customerid:0});
+      setTimeout(() => {
+        this.setState({loadings:false});
+      }, 2000);
+
+  };
+
  componentDidMount(){
   const { dispatch } = this.props;
   dispatch({
@@ -214,18 +290,16 @@ handleCancel = () => {
     };
     const { submitting } = this.props;
     const { getFieldDecorator } = this.props.form;
-    const { create:{ data:{list},image,item,customer} } = this.props;
-    const { visible, loading } = this.state;
+    const { create:{ data:{list},image,item,customer},loading,loadings } = this.props;
+    const { visible } = this.state;
     const noimage='https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=33325274,822918042&fm=26&gp=0.jpg';
     console.log('item',customer);
   
     
     return (
-      <PageHeaderWrapper content={  <Link to={
-        {pathname:'/order/all'}
-      }>
+      <PageHeaderWrapper breadcrumb={{routes}} content={  <Link to={{pathname:'/order/all'}} >
        返回订单
-      </Link>}>
+      </Link>} title='创建订单'>
         
          <div className={styles.whorder}>
        <div className={styles.produ}>
@@ -233,7 +307,7 @@ handleCancel = () => {
             onSubmit={this.handleSubmit}
             hideRequiredMark
           >   
-            <Card bordered={true}>
+            <Card bordered={true} loading={loading}>
 {/* 选择产品 */}
           <FormItem label='订单详情'>       
            <Select  style={{ width: '600px' }} onChange={this.selectProduct} placeholder='请选择商品' showSearch allowClear={true}> 
@@ -246,8 +320,8 @@ handleCancel = () => {
 {/* 产品预览 */}
           <div style={{display: item==0 ?'none':'block'}}>
           <Row>
-             <Col style={{display:'flex',}}>
-                 <img style={{width:'50px',height:'50px',flex:1,display:'block',marginRight:'10px'}} src={image} />
+             <Col style={{display:'flex',alignItems:'center'}}>
+                 <img style={{width:'50px',flex:1,display:'block',marginRight:'10px'}} src={image} />
                  <div style={{flex:3}}>
                       <a style={{pointerEvents:'none' }} href='#'>{item.title}</a>
                       <div style={{padding:'5px 0'}}>{item==0?'':item.variants[0].title}</div>
@@ -268,7 +342,7 @@ handleCancel = () => {
           </Row>
            </div>
 {/* note,价格 */}
-          <div style={{display:'flex',borderBottom:'1px solid #eee',marginBottom:'10px'}}>
+          <div style={{display:'flex',borderBottom:'1px solid #ccc',marginBottom:'10px'}}>
             <FormItem label='Notes' style={{width:'300px',flex:3,marginRight:'50px'}} >
                   <Input placeholder="add a note..." onBlur={this.changeNote} />
             </FormItem>
@@ -286,8 +360,8 @@ handleCancel = () => {
           </div>
 {/* 付款状态 */}
          <FormItem >
-             <Button style={{marginRight:'20px'}} onClick={this.changestatus.bind(this,'paid')}>标记为已付款</Button>
-             <Button onClick={this.changestatus.bind(this,'pending')}>标记为待处理</Button>
+             <Button type="dashed"  style={{marginRight:'20px'}} onClick={this.changestatus.bind(this,'paid')}>Mask as paid</Button>
+             <Button type="dashed"  onClick={this.changestatus.bind(this,'pending')}>Mask as pending</Button>
             </FormItem>
 {/* 提交保存按钮*/}
           <FormItem
@@ -297,14 +371,10 @@ handleCancel = () => {
               }}
             >
               <Button type="primary" htmlType="submit" loading={this.state.loadings}>
-               <FormattedMessage id="formandbasic-form.form.submit" />
+              创建订单
               </Button>
-              <Button
-                style={{
-                  marginLeft: 8,
-                }}
-              >
-                <FormattedMessage id="formandbasic-form.form.save" />
+              <Button type="primary" style={{marginLeft: 8,}} onClick={this.saveDraft.bind(this)}>
+                保存草稿
               </Button>
             </FormItem>  
               </Card>
@@ -313,12 +383,12 @@ handleCancel = () => {
 
 {/* 创建顾客 */}
           <div className={styles.cus}>
-           <Card bordered={true}>
+           <Card bordered={true} loading={loading}>
               <FormItem label="创建顾客">   
 
               <div style={{display:this.state.display}}>
                
-                <Select style={{ width: '200px',color:'#ccc' }}  value='搜索顾客' allowClear={true} showSearch onFocus={this.getCustomers} notFoundContent={<div style={{textAlign:'center'}}><Spin  spinning={this.state.loading} /></div>} >  
+                <Select style={{ width: '200px',color:'#ccc' }}  value='搜索顾客' allowClear={true} showSearch onFocus={this.getCustomers} notFoundContent={<div style={{textAlign:'center'}}><Spin  spinning={loadings} /></div>} >  
 
              {
             customer.length!=0 &&  <Option value="add a customer">

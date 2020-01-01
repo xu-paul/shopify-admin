@@ -18,7 +18,6 @@ const Model = {
       const reg = /(?<=page_info=).*?(?=>)/g;
       const { order } = yield select();
       console.log('.........', payload);
-
       const response = yield call(getOrders, payload);
       const res = yield call(getOrdersCount, payload);
       console.log('sss', order.current, payload, response);
@@ -35,9 +34,6 @@ const Model = {
       });
 
       if (response.headers.link != null && payload && payload.order) {
-        console.log('====================================');
-        console.log('aaaaaaaaaaa');
-        console.log('====================================');
         yield put({
           type: 'current',
           payload: 1
@@ -50,9 +46,6 @@ const Model = {
         });
       }
       if (response.headers.link != null && payload && payload.financial_status) {
-        console.log('====================================');
-        console.log('ssssss');
-        console.log('====================================');
         yield put({
           type: 'current',
           payload: 1
@@ -130,11 +123,7 @@ const Model = {
 
     *remove({ payload: { id }, callback }, { call, put }) {
       for (let i = 0; i < id.length; i++) {
-        let response = yield call(removeOrders, id[i]);
-        yield put({
-          type: 'save',
-          payload: response,
-        });
+        yield call(removeOrders, id[i]);
       }
       const res = yield call(getOrders);
       yield put({

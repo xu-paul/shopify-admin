@@ -24,12 +24,24 @@ import CreateForm from './components/CreateForm';
 import StandardTable from './components/StandardTable';
 import UpdateForm from './components/UpdateForm';
 import styles from './style.less';
-import  {routes}  from '../../.umi/router';  
 import Link from 'umi/link'
 import { log } from 'util';
 const FormItem = Form.Item;
 const { Option } = Select;
-
+const routes = [
+  {
+    path: '/',
+    breadcrumbName: '首页',
+  },
+  {
+    path: '/order/all',
+    breadcrumbName: '订单',
+  },
+  {
+    path: '/order/all',
+    breadcrumbName: '所有订单',
+  },
+];
 const getValue = obj =>
   Object.keys(obj)
     .map(key => obj[key])
@@ -71,28 +83,6 @@ class Order extends Component {
       title: 'Payment',
       dataIndex: 'financial_status',
       render:val=>{return <Badge status={val=='paid'?"success":"processing"} text={val} className={styles.payment} />}
-      // filters: [
-      //   {
-      //     text: status[0],
-      //     value: '0',
-      //   },
-      //   {
-      //     text: status[1],
-      //     value: '1',
-      //   },
-      //   {
-      //     text: status[2],
-      //     value: '2',
-      //   },
-      //   {
-      //     text: status[3],
-      //     value: '3',
-      //   },
-      // ],
-
-      // render(val) {
-      //   return <Badge status={statusMap[val]} text={status[val]} />;
-      // },
     },
     {
       title: 'Fulfillment',
@@ -104,16 +94,6 @@ class Order extends Component {
       dataIndex: 'total_price',
       render: (val, record) => currencyFormatter.format(val, {code: record.currency})
     }
-    // {
-    //   title: '操作',
-    //   render: (text, record) => (
-    //     <Fragment>
-    //       <a onClick={() => this.handleUpdateModalVisible(true, record)}>配置</a>
-    //       <Divider type="vertical" />
-    //       <a href="">订阅警报</a>
-    //     </Fragment>
-    //   ),
-    // },
   ];
 
   componentDidMount() {
@@ -301,14 +281,15 @@ class Order extends Component {
             lg: 24,
             xl: 48,
           }}
+          style={{paddingBottom:'20px'}}
         >
           <Col md={8} sm={24}>
-            <FormItem label="订单号">
+            <FormItem label="Order">
               {getFieldDecorator('name')(<Input placeholder="请输入" />)}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
-            <FormItem label="付款状态" >
+            <FormItem label="payment" >
               {getFieldDecorator('financial_status')(
                 <Select
                   placeholder="请选择"
@@ -322,8 +303,32 @@ class Order extends Component {
               )}
             </FormItem>
           </Col>
+         
         
-          <Col md={8} sm={24}>
+         
+        </Row>
+        <Row
+           gutter={{
+            md: 8,
+            lg: 24,
+            xl: 48,
+          }}>
+             <Col md={8} sm={24}>
+            <FormItem label="fulfillment" >
+              {getFieldDecorator('fulfillment_status')(
+                <Select
+                  placeholder="请选择"
+                  style={{
+                    width: '200px',
+                  }}
+                >
+                  <Option value="shipped">fulfilled</Option>
+                  <Option value="unshipped">Unfulfill</Option>
+                </Select>,
+              )}
+            </FormItem>
+          </Col>
+        <Col md={8} sm={24}>
             <span className={styles.submitButtons}>
               <Button type="primary" htmlType="submit">
                 查询
@@ -351,134 +356,7 @@ class Order extends Component {
     );
   }
 
-  // renderAdvancedForm() {
-  //   const {
-  //     form: { getFieldDecorator },
-  //   } = this.props;
-  //   return (
-  //     <Form onSubmit={this.handleSearch} layout="inline">
-  //       <Row
-  //         gutter={{
-  //           md: 8,
-  //           lg: 24,
-  //           xl: 48,
-  //         }}
-  //       >
-          
-  //         <Col md={8} sm={24}>
-  //           <FormItem label="订单号">
-  //             {getFieldDecorator('name')(<Input placeholder="请输入" />)}
-  //           </FormItem>
-  //         </Col>
-
-  //         <Col md={8} sm={24}>
-  //           <FormItem label="付款状态">
-  //             {getFieldDecorator('financial_status')(
-  //               <Select
-  //                 placeholder="请选择"
-  //                 style={{
-  //                   width: '100%',
-  //                 }}
-  //               >
-  //                 <Option value="pending">pending</Option>
-  //                 <Option value="paid">paid</Option>
-  //               </Select>,
-  //             )}
-  //           </FormItem>
-  //         </Col>
-  //         <Col md={8} sm={24}>
-  //           <FormItem label="顾客">
-  //             {getFieldDecorator('customer.first_name')(<Input placeholder="请输入顾客的姓" />)}
-  //           </FormItem>
-  //         </Col>
-
-          
-  //       </Row>
-  //       <Row
-  //         gutter={{
-  //           md: 8,
-  //           lg: 24,
-  //           xl: 48,
-  //         }}
-  //       >
-  //         <Col md={8} sm={24}>
-  //           <FormItem label="更新日期">
-  //             {getFieldDecorator('date')(
-  //               <DatePicker
-  //                 style={{
-  //                   width: '100%',
-  //                 }}
-  //                 placeholder="请输入更新日期"
-  //               />,
-  //             )}
-  //           </FormItem>
-  //         </Col>
-  //         <Col md={8} sm={24}>
-  //           <FormItem label="使用状态">
-  //             {getFieldDecorator('status3')(
-  //               <Select
-  //                 placeholder="请选择"
-  //                 style={{
-  //                   width: '100%',
-  //                 }}
-  //               >
-  //                 <Option value="0">关闭</Option>
-  //                 <Option value="1">运行中</Option>
-  //               </Select>,
-  //             )}
-  //           </FormItem>
-  //         </Col>
-  //         <Col md={8} sm={24}>
-  //           <FormItem label="使用状态">
-  //             {getFieldDecorator('status4')(
-  //               <Select
-  //                 placeholder="请选择"
-  //                 style={{
-  //                   width: '100%',
-  //                 }}
-  //               >
-  //                 <Option value="0">关闭</Option>
-  //                 <Option value="1">运行中</Option>
-  //               </Select>,
-  //             )}
-  //           </FormItem>
-  //         </Col>
-  //       </Row>
-  //       <div
-  //         style={{
-  //           overflow: 'hidden',
-  //         }}
-  //       >
-  //         <div
-  //           style={{
-  //             float: 'right',
-  //             marginBottom: 24,
-  //           }}
-  //         >
-  //           <Button type="primary" htmlType="submit">
-  //             查询
-  //           </Button>
-  //           <Button
-  //             style={{
-  //               marginLeft: 8,
-  //             }}
-  //             onClick={this.handleFormReset}
-  //           >
-  //             重置
-  //           </Button>
-  //           <a
-  //             style={{
-  //               marginLeft: 8,
-  //             }}
-  //             onClick={this.toggleForm}
-  //           >
-  //             收起 <Icon type="up" />
-  //           </a>
-  //         </div>
-  //       </div>
-  //     </Form>
-  //   );
-  // }
+ 
 
   renderForm() {
     const { expandForm } = this.state;
@@ -487,7 +365,7 @@ class Order extends Component {
 
   render() {
     const {
-      order: { data,count },
+      order: { data },
       loading,
     } = this.props;
 
@@ -509,7 +387,8 @@ class Order extends Component {
       handleUpdate: this.handleUpdate,
     };
     return (
-      <PageHeaderWrapper >
+      
+      <PageHeaderWrapper breadcrumb={{routes}} >
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>

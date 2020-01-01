@@ -13,3 +13,9 @@ export async function addOrder(params) {
     data:{...params}
   });
 }
+export async function addDraftOrder(params) {
+  return await axios('https://mirror.viralbox.org/xuzyy/admin/api/2019-10/draft_orders.json',{
+    method:'POST',
+    data:{...params}
+  });
+}

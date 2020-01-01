@@ -59,7 +59,7 @@
 >   > 页面的数据获取和展示以及部分的数据过滤功能。  
 
 >郑宜亮:  
->   > 完成了[Products](https://xu-paul.github.io/shopify-admin/#/products/all-products)
+>   > 完成了[Products](https://xu-paul.github.io/shopify-admin/#/products/allProducts)
 >   > 页面的数据获取和展示以及部分的数据过滤功能。 
 
 >刘志杰:  
@@ -82,17 +82,40 @@
 
 
 >郑宜亮:  
->   > 完成了[Products](https://xu-paul.github.io/shopify-admin/#/order/products)
+>   > 完成了[Products](https://xu-paul.github.io/shopify-admin/#/products/allProducts)
 >   > 页面的部分数据过滤功能；实现了排序和分页,基本实现修改功能，优化代码结构。
 
 >刘志杰:  
 >   > 测试已完成功能
 
->戴铮杰:  products
+>戴铮杰: 
 >   > 基本完成了orders原型的制作
 
 >王富祥:  
 >   > 基本完成了products原型的制作  
+
+>来成辉:  
+>   > 基本完成了customers原型的制作
+
+#### 第三周
+
+>徐钟焬:  
+>   > 完成了[订单，顾客](https://xu-paul.github.io/shopify-admin/#/order/all)
+>   > 页面的数据过滤功能；实现了排序和分页,实现订单顾客的增删改，以及对应的详情页。
+
+
+>郑宜亮:  
+>   > 完成了[产品，首页](https://xu-paul.github.io/shopify-admin/#/products/allProducts)
+>   > 页面的数据过滤功能；实现了排序和分页,实现产品的增删改，以及对应的详情页。
+
+>刘志杰:  
+>   > 测试文档已完成
+
+>戴铮杰: 
+>   > 完成了[orders](https://iidgvn.axshare.com/#g=1&p=%E4%B8%BB%E9%A1%B5)原型的制作,密码：a123
+
+>王富祥:  
+>   > 完成了[productss](https://s68qon.axshare.com)原型的制作,密码：wfx123 
 
 >来成辉:  
 >   > 基本完成了customers原型的制作

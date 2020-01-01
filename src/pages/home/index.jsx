@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
+import HomeButton from './Button';
 
 class Home extends Component {
   render() {
     return (
       <div>
-       1
+        <HomeButton />
       </div>
     );
   }

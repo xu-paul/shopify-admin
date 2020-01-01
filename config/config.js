@@ -142,6 +142,10 @@ export default {
                   component: './order/draft',
                 },
                 {
+                  path: '/order/draft/draft_detail/:id',
+                  component: './order/draft/draft_detail',
+                },
+                {
                   path: '/order/draft/create',
                   component: './order/draft/create',
                 },
@@ -152,6 +156,20 @@ export default {
                   component: './order/abandoned',
                 },
               ],
+            },
+            {
+              name: 'customer',
+              icon: 'smile',
+              path: '/customer',
+              component: './customer',
+            },
+            {
+              path: '/customer/new',
+              component: './customer/new',
+            },
+            {
+              path: '/customer/customer_detail/:id',
+              component: './customer/customer_detail',
             },
             {
               name: 'products',
