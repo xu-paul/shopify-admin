@@ -115,10 +115,10 @@
 >   > 完成了[orders](https://iidgvn.axshare.com/#g=1&p=%E4%B8%BB%E9%A1%B5)原型的制作,密码：a123
 
 >王富祥:  
->   > 完成了[productss](https://s68qon.axshare.com)原型的制作,密码：wfx123 
+>   > 完成了[products](https://s68qon.axshare.com)原型的制作,密码：wfx123 
 
 >来成辉:  
->   > 基本完成了customers原型的制作
+>   > 完成了[customers](https://tii3o3.axshare.com)原型的制作,密码：741852963 
 
 ***
 
