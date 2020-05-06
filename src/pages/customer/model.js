@@ -9,10 +9,8 @@ const Model = {
     },
   },
   effects: {
-    *fetch({ payload }, { call, put }) {
+    *fetch(_, { call, put }) {
       const response = yield call(getCustomers);
-      console.log('payload',payload,'res',response);
-      
       yield put({
         type: 'save',
         payload: {

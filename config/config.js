@@ -198,6 +198,19 @@ export default {
               ],
             },
             {
+              name: 'form',
+              icon: 'profile',
+              path: '/form',
+              routes: [
+                {
+                  name: 'basic-form',
+                  icon: 'smile',
+                  path: '/form/basic-form',
+                  component: './form/basic-form',
+                },      
+              ],
+            },
+            {
               path: '/',
               redirect: '/dashboard',
               authority: ['admin', 'user'],
