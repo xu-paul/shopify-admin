@@ -141,7 +141,12 @@ class New extends Component {
               {...formItemLayout}
               label='email'
             >
-              {getFieldDecorator('email')(
+              {getFieldDecorator('email',{
+            rules: [
+              {
+                type: 'email',
+                message: 'email无效',
+              }]})(
                 <Input
                   placeholder='邮箱'
                 />,

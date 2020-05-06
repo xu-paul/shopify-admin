@@ -55,7 +55,9 @@ class Customer extends Component {
       render: (val,record) => 
       ( <div>
         <Icon type="user" style={{color:'skyblue',fontSize:'28px',paddingRight:'10px'}} />
-        {val?`${val} ${record.last_name}`:'/ /'}
+        {val?`${val} ${record.last_name}`:'/ /'} 
+       <span style={{padding:'0 8px'}}>{record.addresses.length!=0?record.addresses[0].country:' '}</span> 
+        {record.addresses.length!=0?record.addresses[0].province:' '}
         </div> ),
        
     },
